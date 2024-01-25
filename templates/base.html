@@ -1,0 +1,79 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+        <meta name="description" content="" />
+        <meta name="author" content="" />
+        <link href='{% static 'bootstrap-5.3.2-dist/css/bootstrap.min.css' %}' rel='stylesheet'>
+        <script src='{% static 'bootstrap-5.3.2-dist/js/bootstrap.bundle.min.js' %}'></script>
+        <title>Organize Your Pet!</title>
+        <!-- Favicon-->
+        <link rel="icon" type="image/x-icon" href="{% static 'assets/favicon.ico' %}" />
+        <!-- Core theme CSS (includes Bootstrap)-->
+        <link href="{% static 'css/base.css' %}" rel="stylesheet" />
+    </head>
+    <body>
+    {% block content %}
+        <!-- Responsive navbar-->
+        <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        {% include 'navbar.html' %}
+        </nav>
+        <!-- Page Content-->
+        <div class="container px-4 px-lg-5">
+            <!-- Heading Row-->
+            <div class="row gx-4 gx-lg-5 align-items-center my-5">
+                <div class="col-lg-7"><img class="img-fluid rounded mb-4 mb-lg-0" src="{% static 'img/owczarek.jpg'  %}" alt="..." /></div>
+                <div class="col-lg-5">
+                        <h1 class="font-weight-light">Organize Your Pet</h1>
+                    <p class="lead fw-medium lh-sm">To aplikacja do zarządzania Twoim pupilem! W łatwy i przyjemny sposób umówisz wizytę u weterynarza, odwołasz ją lub sprawdzisz jej szczegóły!</p>
+{#                    <a class="btn btn-danger btn-outline-dark" href="#!">Call to Action!</a>#}
+                </div>
+            </div>
+            <!-- Call to Action-->
+            <div class="card text-white bg-dark my-5 py-4 text-center">
+                <div class="card-body"><p class="text-white m-0">Z naszą aplikacją do zarządzania wizytami u weterynarza, dbamy o komfort i zdrowie Twojego pupila. Planuj wizyty, śledź historię zdrowia swojego zwierzaka i ciesz się spokojem, wiedząc, że opieka nad nim jest zorganizowana i bezproblemowa. </p></div>
+            </div>
+            <!-- Content Row-->
+            <div class="row gx-4 gx-lg-5">
+                <div class="col-md-4 mb-5">
+                    <div class="card h-100">
+                        <div class="card-body">
+                            <h2 class="card-title">Zarejestruj się!</h2>
+                            <p class="card-text">Zarejestruj się, aby odkrywać unikalne funkcje naszej platformy. Dostęp do personalizowanych usług, możliwość śledzenia swoich zwierząt, zarządzania wizytami i wiele więcej</p>
+                        </div>
+                        <div class="card-footer"><a class="btn btn-danger btn-outline-dark btn-sm" href="{% url 'registration_view' %}">Rejestracja</a></div>
+                    </div>
+                </div>
+                <div class="col-md-4 mb-5">
+                    <div class="card h-100">
+                        <div class="card-body">
+                            <h2 class="card-title">Dodaj swojego pupila!</h2>
+                            <p class="card-text">Rozpocznij opiekę nad swoim zwierzakiem od dodania go do aplikacji. To proste i szybkie!</p>
+                        </div>
+                        <div class="card-footer"><a class="btn btn-danger btn-outline-dark btn-sm" href="{% url 'add_pet' %}">Dodaj zwierzę</a></div>
+                    </div>
+                </div>
+                <div class="col-md-4 mb-5">
+                    <div class="card h-100">
+                        <div class="card-body">
+                            <h2 class="card-title">Umów wizytę</h2>
+                            <p class="card-text">Planuj opiekę nad swoim pupilem - umów wizytę już teraz!</p>
+                        </div>
+                        <div class="card-footer"><a class="btn btn-danger btn-outline-dark btn-sm" href="{% url 'book_appointment' %}">Sprawdź dostępne terminy</a></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endblock %}
+        <!-- Footer-->
+    {% block footer %}
+        <footer class="py-5 bg-dark text-center fixed-bottom">
+            <div class="container px-4 px-lg-5"><p class="m-0 text-center text-white">© 2024 Organize Your Pet. Wszelkie prawa zastrzeżone.</p></div>
+        </footer>
+    {% endblock %}
+        <!-- Core theme JS-->
+        <script src="{% static 'js/base_scripts.js' %}"></script>
+    </body>
+</html>

@@ -1,0 +1,62 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+    <link href='{% static 'bootstrap-5.3.2-dist/css/bootstrap.min.css' %}' rel='stylesheet'>
+    <script src='{% static 'bootstrap-5.3.2-dist/js/bootstrap.bundle.min.js' %}'></script>
+
+
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+    <div class="container px-5">
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation"><span class="navbar-toggler-icon"></span></button>
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+            <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
+                <li class="nav-item"><a class="nav-link" aria-current="page" href="{% url 'index' %}">Strona główna</a></li>
+                <li class="nav-item"><a class="nav-link" href="{% url 'about' %}">O aplikacji</a></li>
+                <li class="nav-item"><a class="nav-link" href="{% url 'login_view' %}">Zaloguj</a></li>
+            </ul>
+        </div>
+    </div>
+</nav>
+
+
+<div class="container px-4 px-lg-5">
+    <!-- Heading Row-->
+    <div class="row gx-10 gx-lg-20 align-items-center my-5 text-center">
+        <div class="col-lg-7 "><img class="img-fluid rounded mb-4 mb-lg-0" src="{% static 'img/kot.jpg'  %}" alt="..." /></div>
+{#        <div class="col-lg-5">#}
+{#            <h3 class="font-weight-light">Witaj w Organize Your Pet - Twojego niezawodnego partnera w dbaniu o zdrowie i dobre samopoczucie Twojego pupila.</h3>#}
+{#            <p class="lead fw-medium lh-sm">Nie masz jeszcze konta? Załóż je!</p>#}
+{#            <a class="btn btn-danger btn-outline-dark" href="{% url 'registration_view' %}">Zarejestruj się</a>#}
+{#            <p class="lead fw-medium lh-sm">Posiadasz już konto? Zaloguj się!</p>#}
+{#            <a class="btn btn-danger btn-outline-dark" href="{% url 'login_view' %}">Zaloguj</a>#}
+{#        </div>#}
+    </div>
+</div>
+
+
+
+<div class="container mt-5 bg-light-subtle">
+    <div class="text-center">
+        <h1 class="text-primary-emphasis text-bg-secondary fw-bold">Witaj w Organize Your Pet - Twojego niezawodnego partnera w dbaniu o zdrowie i dobre samopoczucie Twojego pupila.</h1>
+    </div>
+    <div>
+    <h2 class="text-danger-emphasis text-bg-secondary fw-bolder lh-sm">Nasza Misja</h2>
+        <p class="lead fw-medium lh-sm text-bg-dark">Celem naszej aplikacji jest ułatwienie procesu zarządzania wizytami weterynaryjnymi, zapewniając prostą i intuicyjną platformę, która umożliwia właścicielom zwierząt łatwe umawianie wizyt oraz sprawną procedurę odwoływania ich, gdy to konieczne.
+        <ul>
+            <h2 class="text-danger-emphasis text-bg-secondary fw-bolder lh-sm">Funkcje Aplikacji:</h2>
+            <li class="fst-italic lh-sm text-bg-light">Umawianie Wizyt: Nasza aplikacja umożliwia szybkie i wygodne umawianie wizyt weterynaryjnych. Dzięki intuicyjnemu interfejsowi użytkownika możesz łatwo wybrać dogodny termin, specjalistę oraz określić powód wizyty.</li>
+        {#                <li>Powiadomienia i Przypomnienia: Niezapomniane wizyty! Otrzymuj powiadomienia i przypomnienia dotyczące nadchodzących wizyt, co pozwala uniknąć zapomnienia o ważnych terminach i zapewnia zdrowie i dobre samopoczucie Twojego zwierzaka.</li>#}
+            <li class="fst-italic lh-sm text-bg-light">Łatwe Odwoływanie Wizyt: Jeśli plany się zmienią, nie ma problemu. Nasza aplikacja umożliwia łatwe odwoływanie wizyt, dając Ci elastyczność w zarządzaniu harmonogramem wizyt weterynaryjnych.</li>
+            <li class="fst-italic lh-sm text-bg-light">Profil Zwierzaka: Twórz profile swoich zwierzaków, śledź ich historię medyczną, szczepienia i plany leczenia, co ułatwia monitorowanie zdrowia i dobrego samopoczucia Twoich pupili.</li>
+        </ul>
+
+        <ul>
+            <h2 class="text-danger-emphasis text-bg-secondary fw-bolder lh-sm">Dlaczego My?</h2>
+            <li class="fst-italic lh-sm text-bg-light">Bezpieczeństwo Danych: Dbamy o prywatność Twoich danych. Nasza aplikacja stosuje najnowocześniejsze zabezpieczenia, aby zapewnić bezpieczeństwo informacji o Tobie i Twoich zwierzakach.</li>
+            <li class="fst-italic lh-sm text-bg-light">Łatwość Obsługi: Stworzyliśmy prostą i intuicyjną aplikację, aby ułatwić Ci korzystanie z naszych usług. Nawigacja jest przyjazna dla użytkownika, co sprawia, że umawianie wizyt to czysta przyjemność.</li>
+            <li class="fst-italic lh-sm text-bg-light">Wsparcie Specjalistów: Współpracujemy z doświadczonymi weterynarzami, co gwarantuje profesjonalną opiekę dla Twojego zwierzaka. Nasza aplikacja umożliwia wybór specjalisty dostosowanego do konkretnych potrzeb Twojego pupila.</li>
+        </ul>
+        <p class="lead fw-medium lh-sm">Dziękujemy za zaufanie i zapraszamy do korzystania z naszej aplikacji, która jest stworzona z myślą o zdrowiu i szczęściu Twojego zwierzaka.
+    </div>
+</div>
+{%  endblock %}

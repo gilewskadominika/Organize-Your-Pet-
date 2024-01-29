@@ -1,0 +1,38 @@
+{% extends 'accounts/dashboard.html' %}
+{% load static %}
+{#{% block content %}#}
+{#    <form method="post">#}
+{#        {% csrf_token %}#}
+{#        {{ form.as_p }}#}
+{#        <button type="submit">Zapisz zmiany</button>#}
+{#    </form>#}
+{#{% endblock %}#}
+
+{% block content %}
+    <form method="post">
+        {% csrf_token %}
+        <div class="col-md-6">
+            <label for="email" class="form-label">Email:</label>
+            <input type="email" class="form-control" id="email"
+            name="email">
+        </div>
+        <div class="col-md-6">
+            <label for="username" class="form-label">Nazwa użytkownika:</label>
+            <input type="text" class="form-control" id="username"
+            name="username">
+        </div>
+        <div class="col-md-6">
+            <label for="first_name" class="form-label">Imię:</label>
+            <input type="text" class="form-control" id="first_name"
+            name="first_name">
+        </div>
+        <div class="col-md-6">
+            <label for="last_name" class="form-label">Nazwisko:</label>
+            <input type="text" class="form-control" id="last_name"
+            name="last_name">
+        </div>
+        <div class="col-12">
+            <button class="btn btn-danger btn-outline-dark" type="submit">Zapisz zmiany</button>
+        </div>
+    </form>
+{% endblock %}

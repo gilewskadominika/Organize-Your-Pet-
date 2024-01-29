@@ -3,6 +3,7 @@ from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.contrib.auth.models import User
 from django.http import HttpResponse
 from django.shortcuts import render, redirect
+from django.urls import reverse
 from django.views import View
 from django.views.generic import UpdateView
 
@@ -16,7 +17,7 @@ class RegistrationView(View):
             return redirect('dashboard')
         form = RegistrationForm()
         ctx = {'form': form}
-        return render(request, 'add_form.html', ctx)
+        return render(request, 'OYP/add_form.html', ctx)
 
     def post(self, request):
         form = RegistrationForm(request.POST)
@@ -27,7 +28,7 @@ class RegistrationView(View):
             user.save()
             login(request, user)
             return redirect('index')
-        return render(request, 'add_form.html', ctx)
+        return render(request, 'OYP/add_form.html', ctx)
 
 
 class LoginView(View):
@@ -37,7 +38,7 @@ class LoginView(View):
             return redirect('dashboard')
         form = LoginForm()
         ctx = {'form': form}
-        return render(request, 'add_form.html', ctx)
+        return render(request, 'OYP/add_form.html', ctx)
 
     def post(self, request):
         form = LoginForm(request.POST)
@@ -50,7 +51,7 @@ class LoginView(View):
                 login(request, user)
                 next = request.GET.get('next', 'dashboard')
                 return redirect(next)
-        return render(request, 'add_form.html', ctx)
+        return render(request, 'OYP/add_form.html', ctx)
 
 
 class LogoutView(LoginRequiredMixin, View):
@@ -68,10 +69,17 @@ class ProfileView(LoginRequiredMixin, View):
             'username': user.username,
             'email': user.email
         }
-        return render(request, 'profil.html', ctx)
+        return render(request, 'accounts/profile.html', ctx)
 
 
 class ProfileEditView(UserPassesTestMixin, UpdateView):
+    model = User
+    template_name = 'accounts/profile_edit.html'
+    fields = ['email', 'username', 'first_name', 'last_name']
+
     def test_func(self):
-        profil = self.get_objects()
-        return self.request.user == profil.user
+        profile = self.get_object()
+        return self.request.user == profile
+
+    def get_success_url(self):
+        return reverse('profile_view')

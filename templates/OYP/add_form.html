@@ -1,4 +1,4 @@
-{% extends 'base.html' %}
+{% extends 'home_page/base.html' %}
 {% load static %}
 {% block content %}
 
@@ -19,7 +19,7 @@
 <div class="container px-4 px-lg-5">
     <!-- Heading Row-->
     <div class="row gx-4 gx-lg-5 align-items-center my-5">
-        <div class="col-lg-7"><img class="img-fluid rounded mb-4 mb-lg-0" src="{% static 'img/pidz.jpg'  %}" alt="..." /></div>
+        <div class="col-lg-7"><img class="img-fluid rounded mb-4 mb-lg-0" src="{% static 'img/pidz.jpg' %}" alt="..." /></div>
         <div class="col-lg-5">
             <h1 class="font-weight-light">Organize Your Pet</h1>
             <p class="lead fw-medium lh-sm">Nie masz jeszcze konta? Załóż je!</p>
@@ -35,7 +35,7 @@
     <form method="post">
         {% csrf_token %}
         {{ form.as_p }}
-        <input type="submit">
+        <button class="btn btn-danger btn-outline-dark" type="submit">Zapisz</button>
     </form>
     </div>
 {% endblock %}

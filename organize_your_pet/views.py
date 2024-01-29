@@ -16,23 +16,24 @@ class IndexView(View):
     def get(self, request):
         if request.user.is_authenticated:
             return redirect('dashboard')
-        return render(request, 'base.html')
+        return render(request, 'home_page/base.html')
 
 
 class AboutView(View):
     def get(self, request):
         if request.user.is_authenticated:
             return redirect('dashboard')
-        return render(request, 'about.html')
+        return render(request, 'home_page/about.html')
 
 
-class DashboardView(LoginRequiredMixin, View):
+class DashboardView(View):
+
     def get(self, request):
         closest_visit = Visit.objects.all().order_by('available_date__date').first()
         ctx = {
             'closest_visit': closest_visit
         }
-        return render(request, 'dashboard.html', ctx)
+        return render(request, 'accounts/dashboard.html', ctx)
 
 
 class AddPetView(LoginRequiredMixin, View):
@@ -44,10 +45,12 @@ class AddPetView(LoginRequiredMixin, View):
 
 class PetsListView(LoginRequiredMixin, View):
     def get(self, request):
-        return HttpResponse('lista zwierzaków')
+        if request.user.is_authenticated:
+            return HttpResponse('lista zwierzaków')
+        return redirect('login_view')
 
 
-class ModifyPetView(UserPassesTestMixin, UpdateView):
+class ModifyPetView(LoginRequiredMixin, View):
     def get(self, request):
         return HttpResponse('edytuj zwierzaka')
 
@@ -61,14 +64,18 @@ class BookAppointmentView(LoginRequiredMixin, View):
 
 class VisitsListView(LoginRequiredMixin, View):
     def get(self, request):
-        return HttpResponse('Lista wizyt')
+        if request.user.is_authenticated:
+            return HttpResponse('lista wizyt')
+        return redirect('login_view')
 
 
 class VisitInfoView(LoginRequiredMixin, View):
     def get(self, request, id):
-        return HttpResponse('info o konkretnej wizycie')
+        if request.user.is_authenticated:
+            return HttpResponse('info o wizycie')
+        return redirect('login_view')
 
 
-class VisitModifyView(UserPassesTestMixin, UpdateView):
+class VisitModifyView(LoginRequiredMixin, View):
     def get(self, request, id):
         return HttpResponse('edytowanie info o konkretnej wizycie')

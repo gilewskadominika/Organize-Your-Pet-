@@ -1,0 +1,38 @@
+{% extends 'accounts/dashboard.html' %}
+{% load static %}
+{% block content %}
+    <div class="responsive-account-container">
+        <div>
+            <h1 class="account-header account-header-inline">Twoje Konto</h1>
+            <div class="responsive-account-content">
+                <div class="account-section collapsable-panel clearfix membership-section-wrapper">
+                    <section class="collapsable-section-content account-section-content">
+                        <div class="account-subsection clearfix">
+                            <div class="clearfix">
+                                <div class="account-section-group">
+                                    <div class="account-section-item">
+                                        <span class="account-section-label">Email:</span> {{ user.email }}
+                                    </div>
+                                    <div class="account-section-item account-section-disabled">
+                                        <span class="account-section-label">Nazwa użytkownika:</span> {{ user.username }}
+                                    </div>
+                                    <div class="account-section-item account-section-disabled">
+                                        <span class="account-section-label">Imię:</span> {{ user.first_name }}
+                                    </div>
+                                    <div class="account-section-item account-section-disabled">
+                                        <span class="account-section-label">Nazwisko:</span> {{ user.last_name }}
+                                    </div>
+                                </div>
+                                <div class="account-section-group">
+                                    <button type="button" class="btn btn-danger btn-outline-dark">
+                                        <a href="{% url 'profile_edit_view' pk=user.pk %}" class="text-white text-decoration-none">Edytuj Profil</a>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

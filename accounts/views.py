@@ -1,7 +1,10 @@
 from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
+from django.contrib.auth.models import User
 from django.http import HttpResponse
 from django.shortcuts import render, redirect
 from django.views import View
+from django.views.generic import UpdateView
 
 from accounts.forms import RegistrationForm, LoginForm
 
@@ -30,8 +33,8 @@ class RegistrationView(View):
 class LoginView(View):
 
     def get(self, request):
-        # if request.user.is_authenticated:
-        #     return redirect('dashboard')
+        if request.user.is_authenticated:
+            return redirect('dashboard')
         form = LoginForm()
         ctx = {'form': form}
         return render(request, 'add_form.html', ctx)
@@ -50,12 +53,25 @@ class LoginView(View):
         return render(request, 'add_form.html', ctx)
 
 
-class LogoutView(View):
+class LogoutView(LoginRequiredMixin, View):
     def get(self, request):
         logout(request)
         return redirect('index')
 
 
-class ProfileView(View):
+class ProfileView(LoginRequiredMixin, View):
     def get(self, request):
-        return HttpResponse('Wyświetla profil')
+        user = request.user
+        ctx = {
+            'first_name': user.first_name,
+            'last_name': user.last_name,
+            'username': user.username,
+            'email': user.email
+        }
+        return render(request, 'profil.html', ctx)
+
+
+class ProfileEditView(UserPassesTestMixin, UpdateView):
+    def test_func(self):
+        profil = self.get_objects()
+        return self.request.user == profil.user

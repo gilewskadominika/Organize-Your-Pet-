@@ -6,7 +6,7 @@ from django.http import HttpResponse
 from django.views import View
 from django.views.generic import UpdateView
 
-from organize_your_pet.forms import AddPetForm
+from organize_your_pet.forms import AddPetForm, PetSearchForm
 from organize_your_pet.models import Visit, Pet
 
 
@@ -56,7 +56,13 @@ class AddPetView(LoginRequiredMixin, View):
 
 class PetsListView(LoginRequiredMixin, View):
     def get(self, request):
-        return HttpResponse('lista zwierzaków')
+        pets = Pet.objects.filter(owner=request.user)
+        form = PetSearchForm()
+        if form.is_valid():
+            name = form.cleaned_data.get('name', '')
+            pets = pets.filter(name__icontains=name)
+        ctx = {'form': form, 'list_elements': pets}
+        return render(request, 'OYP/list_elements.html', ctx)
 
 
 class PetDetailView(LoginRequiredMixin, View):

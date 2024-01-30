@@ -29,6 +29,17 @@ class AddPetForm(forms.ModelForm):
                    'chip': forms.CheckboxInput}
 
 
+class PetSearchForm(forms.ModelForm):
+    class Meta:
+        model = Pet
+        fields = ('name',)
+        widgets = {'name': forms.TextInput(attrs={'class': 'form-control'})}
+
+
+
+
+
+
 class AddVisitForm(forms.ModelForm):
     class Meta:
         model = Visit

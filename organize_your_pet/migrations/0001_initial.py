@@ -56,7 +56,6 @@ class Migration(migrations.Migration):
                 ('birth_date', models.DateField(null=True)),
                 ('weight', models.FloatField()),
                 ('chip', models.BooleanField(default=False)),
-                ('owner', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to=settings.AUTH_USER_MODEL)),
             ],
         ),
         migrations.CreateModel(

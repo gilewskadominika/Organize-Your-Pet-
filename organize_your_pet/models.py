@@ -24,7 +24,6 @@ class Pet(models.Model):
     birth_date = models.DateField(null=True)
     weight = models.FloatField()
     chip = models.BooleanField(default=False)
-    owner = models.ForeignKey('auth.User', on_delete=models.CASCADE)
 
     def __str__(self):
         return f'{self.name} ({self.species}{self.other_species})'

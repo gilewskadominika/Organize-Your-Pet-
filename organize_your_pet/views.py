@@ -1,6 +1,6 @@
 from datetime import datetime
 
-from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.shortcuts import render, redirect
 from django.http import HttpResponse
 from django.views import View
@@ -30,7 +30,7 @@ class AboutView(View):
 class DashboardView(View):
 
     def get(self, request):
-        closest_visit = Visit.objects.all().order_by('available_date__date').first()
+        closest_visit = Visit.objects.filter(pet__owner=request.user).order_by('available_date__date').first()
         ctx = {
             'closest_visit': closest_visit
         }
@@ -39,65 +39,61 @@ class DashboardView(View):
 
 class AddPetView(LoginRequiredMixin, View):
     def get(self, request):
-        if request.user.is_authenticated:
-            form = AddPetForm()
-            ctx = {'form': form}
-            return render(request, 'OYP/add_pet_form.html', ctx)
-        return redirect('login_view')
+        form = AddPetForm()
+        ctx = {'form': form}
+        return render(request, 'OYP/add_form_for_logged_in.html', ctx)
 
     def post(self, request):
         form = AddPetForm(request.POST)
         ctx = {'form': form}
         if form.is_valid():
-            name = form.cleaned_data['name']
-            species = form.cleaned_data['species']
-            other_species = form.cleaned_data['other_species']
-            breed = form.cleaned_data['breed']
-            gender = form.cleaned_data['gender']
-            birth_date = form.cleaned_data['birth_date']
-            weight = form.cleaned_data['weight']
-            chip = form.cleaned_data['chip']
-            # pet.owner = self.request.user
-            pet = Pet.objects.create(name=name, species=species, other_species=other_species,
-                                     breed=breed, gender=gender, birth_date=birth_date,
-                                     weight=weight, chip=chip)
+            pet = form.save(commit=False)
+            pet.owner = self.request.user
+            pet.save()
             return redirect('pets_list')
-        return render(request, 'OYP/add_pet_form.html', ctx)
+        return render(request, 'OYP/add_form_for_logged_in.html', ctx)
 
 
 class PetsListView(LoginRequiredMixin, View):
     def get(self, request):
-        if request.user.is_authenticated:
-            return HttpResponse('lista zwierzaków')
-        return redirect('login_view')
+        return HttpResponse('lista zwierzaków')
 
 
-class ModifyPetView(LoginRequiredMixin, View):
-    def get(self, request):
+class PetDetailView(LoginRequiredMixin, View):
+    def get(self, request, pk):
+        return HttpResponse('szczegóły zwierzaka')
+
+
+class ModifyPetView(UserPassesTestMixin, View):
+    def get(self, request, pk):
         return HttpResponse('edytuj zwierzaka')
+
+
+class DeletePetView(LoginRequiredMixin, View):
+    def get(self, request, pk):
+        return HttpResponse('usuń zwierzaka')
 
 
 class BookAppointmentView(LoginRequiredMixin, View):
     def get(self, request):
-        if request.user.is_authenticated:
-            return HttpResponse('zabookuj wizytę u weta')
-        return redirect('login_view')
+        return HttpResponse('zabookuj wizytę u weta')
 
 
 class VisitsListView(LoginRequiredMixin, View):
     def get(self, request):
-        if request.user.is_authenticated:
-            return HttpResponse('lista wizyt')
-        return redirect('login_view')
+        return HttpResponse('lista wizyt')
 
 
-class VisitInfoView(LoginRequiredMixin, View):
-    def get(self, request, id):
-        if request.user.is_authenticated:
-            return HttpResponse('info o wizycie')
-        return redirect('login_view')
+class VisitDetailView(LoginRequiredMixin, View):
+    def get(self, request, pk):
+        return HttpResponse('info o wizycie')
 
 
-class VisitModifyView(LoginRequiredMixin, View):
-    def get(self, request, id):
+class VisitModifyView(UserPassesTestMixin, View):
+    def get(self, request, pk):
         return HttpResponse('edytowanie info o konkretnej wizycie')
+
+
+class DeleteVisitView(LoginRequiredMixin, View):
+    def get(self, request, pk):
+        return HttpResponse('usuń wizytę')

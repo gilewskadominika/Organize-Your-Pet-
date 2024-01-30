@@ -17,7 +17,7 @@ class RegistrationView(View):
             return redirect('dashboard')
         form = RegistrationForm()
         ctx = {'form': form}
-        return render(request, 'OYP/add_form.html', ctx)
+        return render(request, 'OYP/add_form_for_unlogged.html', ctx)
 
     def post(self, request):
         form = RegistrationForm(request.POST)
@@ -28,7 +28,7 @@ class RegistrationView(View):
             user.save()
             login(request, user)
             return redirect('index')
-        return render(request, 'OYP/add_form.html', ctx)
+        return render(request, 'OYP/add_form_for_unlogged.html', ctx)
 
 
 class LoginView(View):
@@ -38,7 +38,7 @@ class LoginView(View):
             return redirect('dashboard')
         form = LoginForm()
         ctx = {'form': form}
-        return render(request, 'OYP/add_form.html', ctx)
+        return render(request, 'OYP/add_form_for_unlogged.html', ctx)
 
     def post(self, request):
         form = LoginForm(request.POST)
@@ -51,7 +51,7 @@ class LoginView(View):
                 login(request, user)
                 next = request.GET.get('next', 'dashboard')
                 return redirect(next)
-        return render(request, 'OYP/add_form.html', ctx)
+        return render(request, 'OYP/add_form_for_unlogged.html', ctx)
 
 
 class LogoutView(LoginRequiredMixin, View):

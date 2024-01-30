@@ -1,12 +1,10 @@
 from django import forms
 
+from organize_your_pet.models import Pet, Visit
 
-class AddPetForm(forms.Form):
-    GENDERS = [
-        ('male', 'Samiec'),
-        ('female', 'Samica'),
-    ]
-    SPECIES = [
+
+class AddPetForm(forms.ModelForm):
+    species = forms.ChoiceField(choices=[
         ('dog', 'Pies'),
         ('cat', 'Kot'),
         ('parrot', 'Papuga'),
@@ -14,12 +12,25 @@ class AddPetForm(forms.Form):
         ('rabbit', 'Królik'),
         ('rodent', 'Gryzoń'),
         ('other', 'Inny')
-    ]
-    name = forms.CharField(max_length=50)
-    species = forms.ChoiceField(choices=SPECIES)
-    other_species = forms.CharField(max_length=50, required=False)
-    breed = forms.CharField(max_length=50)
-    gender = forms.ChoiceField(choices=GENDERS)
-    birth_date = forms.DateField(required=False)
-    weight = forms.FloatField()
-    chip = forms.BooleanField()
+    ], widget=forms.Select(attrs={'class': 'form-control'}))
+    gender = forms.ChoiceField(choices=[
+        ('male', 'Samiec'),
+        ('female', 'Samica')
+    ], widget=forms.Select(attrs={'class': 'form-control'}))
+    birth_date = forms.DateField(widget=forms.DateInput(attrs={'class': 'form-control'}))
+    weight = forms.FloatField(widget=forms.NumberInput(attrs={'class': 'form-control'}))
+
+    class Meta:
+        model = Pet
+        exclude = ('owner',)
+        widgets = {'name': forms.TextInput(attrs={'class': 'form-control'}),
+                   'other_species': forms.TextInput(attrs={'class': 'form-control'}),
+                   'breed': forms.TextInput(attrs={'class': 'form-control'}),
+                   'chip': forms.CheckboxInput}
+
+
+class AddVisitForm(forms.ModelForm):
+    class Meta:
+        model = Visit
+        fields = '__all__'
+        # widgets =

@@ -19,11 +19,14 @@ from organize_your_pet import views
 
 urlpatterns = [
     path('main/', views.DashboardView.as_view(), name='dashboard'),
-    path('addPet/', views.AddPetView.as_view(), name='add_pet'),
-    path('listPet/', views.PetsListView.as_view(), name='pets_list'),
-    path('modifyPet/', views.ModifyPetView.as_view(), name='modify_pet'),
+    path('add-pet/', views.AddPetView.as_view(), name='add_pet'),
+    path('pets/list/', views.PetsListView.as_view(), name='pets_list'),
+    path('pet/<int:pk>/', views.PetDetailView.as_view(), name='pet_info'),
+    path('pet/modify/<int:pk>/', views.ModifyPetView.as_view(), name='modify_pet'),
+    path('pet/delete/<int:pk>/', views.DeletePetView.as_view(), name='delete_pet'),
     path('book-appointment/', views.BookAppointmentView.as_view(), name='book_appointment'),
     path('visits/list/', views.VisitsListView.as_view(), name='visits_list'),
-    path('visit/<int:pk>/', views.VisitInfoView.as_view(), name='visit_info'),
-    path('visit/modify/<int:pk>/', views.VisitModifyView.as_view(), name='visit_modify')
+    path('visit/<int:pk>/', views.VisitDetailView.as_view(), name='visit_info'),
+    path('visit/modify/<int:pk>/', views.VisitModifyView.as_view(), name='visit_modify'),
+    path('visit/delete/<int:pk>/', views.DeleteVisitView.as_view(), name='delete_visit')
 ]

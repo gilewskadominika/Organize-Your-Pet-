@@ -1,0 +1,36 @@
+{% extends 'accounts/dashboard.html' %}
+{% load static %}
+{% block content %}
+<table class="table border-bottom schedules-content">
+        <thead>
+        <tr class="d-flex text-color-darker">
+            <th scope="col" class="col-2">Data</th>
+            <th scope="col" class="col-2">Klinika</th>
+            <th scope="col" class="col-2">Adres</th>
+            <th scope="col" class="col-2">Lekarz</th>
+            <th scope="col" class="col-1">Zwierzak</th>
+            <th scope="col" class="col-4">Opis</th>
+            <th scope="col" class="col-2">
+            </th>
+        </tr>
+        </thead>
+        <tbody class="text-color-lighter">
+        <tr class="d-flex">
+            <td class="col-1">{{ pet.name }}</td>
+            <td class="col-1">{{ pet.get_species_display}}{{ pet.other_species }}</td>
+            <td class="col-1">{{ pet.breed}}</td>
+            <td class="col-1">{{ pet.get_gender_display}}</td>
+            <td class="col-1">{{ pet.birth_date}}</td>
+            <td class="col-1">{{ pet.weight}}kg</td>
+            <td class="col-1">{{ pet.chip }}</td>
+            {% for element in list_elements %}
+            <td class="col-3" href="{{ element.get_absolute_url }}">{{ pet.visit_set.all }}</td>
+            {% endfor %}
+            <td class="col-5 d-flex align-items-center justify-content-center flex-wrap">
+                <a class="btn btn-danger btn-outline-dark" href="{% url 'modify_pet' pk=pet.pk %}" role="button">Edytuj</a>
+                <a class="btn btn-danger btn-outline-dark" href="{% url 'pets_list' %}" role="button">Powrót</a>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+{% endblock %}

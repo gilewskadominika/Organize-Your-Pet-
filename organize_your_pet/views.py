@@ -122,7 +122,7 @@ class DeleteVisitView(LoginRequiredMixin, View):
     def get(self, request, pk):
         visit = Visit.objects.get(pk=pk)
         ctx = {'visit': visit}
-        return render(request, 'OYP/pet_delete_conf.html', ctx)
+        return render(request, 'OYP/visit_delete_conf.html', ctx)
 
     def post(self, request, pk):
         visit = Visit.objects.get(pk=pk)

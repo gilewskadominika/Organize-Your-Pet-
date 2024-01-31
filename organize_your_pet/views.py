@@ -57,21 +57,23 @@ class AddPetView(LoginRequiredMixin, View):
 class PetsListView(LoginRequiredMixin, View):
     def get(self, request):
         pets = Pet.objects.filter(owner=request.user)
-        form = PetSearchForm()
+        form = PetSearchForm(request.GET)
         if form.is_valid():
             name = form.cleaned_data.get('name', '')
             pets = pets.filter(name__icontains=name)
         ctx = {'form': form, 'list_elements': pets}
-        return render(request, 'OYP/list_elements.html', ctx)
+        return render(request, 'OYP/pet_list_elements.html', ctx)
 
 
 class PetDetailView(LoginRequiredMixin, View):
     def get(self, request, pk):
-        return HttpResponse('szczegóły zwierzaka')
+        pet = Pet.objects.get(pk=pk)
+        ctx = {'pet': pet}
+        return render(request, 'OYP/pet_detail.html', ctx)
 
 
-class ModifyPetView(UserPassesTestMixin, View):
-    def get(self, request, pk):
+class ModifyPetView(LoginRequiredMixin, View):
+    def get(self, request):
         return HttpResponse('edytuj zwierzaka')
 
 
@@ -95,7 +97,7 @@ class VisitDetailView(LoginRequiredMixin, View):
         return HttpResponse('info o wizycie')
 
 
-class VisitModifyView(UserPassesTestMixin, View):
+class VisitModifyView(LoginRequiredMixin, View):
     def get(self, request, pk):
         return HttpResponse('edytowanie info o konkretnej wizycie')
 

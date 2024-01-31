@@ -16,7 +16,7 @@ class Pet(models.Model):
         ('rodent', 'Rodent'),
         ('other', 'Other')
     ]
-    name = models.CharField(max_length=50)
+    name = models.CharField(max_length=50, blank=True)
     species = models.CharField(max_length=50, choices=SPECIES, default='other')
     other_species = models.TextField(blank=True, null=True)
     breed = models.CharField(max_length=50)

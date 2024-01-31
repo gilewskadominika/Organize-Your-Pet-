@@ -1,0 +1,36 @@
+{% extends 'accounts/dashboard.html' %}
+{% load static %}
+{% block content %}
+    {% if form %}
+        <div class="col-md-2">
+            <form>
+                {{ form.as_div }}
+                <button class="btn btn-danger btn-outline-dark" type="button">Szukaj</button>
+            </form>
+        </div>
+    {% endif %}
+    <table class="table border-bottom schedules-content">
+        <thead>
+        <tr class="d-flex text-color-darker">
+            <th scope="col" class="col-1">Imię</th>
+            <th scope="col" class="col-2">Gatunek</th>
+            <th scope="col" class="col-7">Informacje</th>
+            <th scope="col" class="col-2"></th>
+        </tr>
+        </thead>
+        <tbody class="text-color-lighter">
+            {% for element in list_elements %}
+        <tr class="d-flex">
+            <td class="col-1">{{ element.name }}</td>
+            <td class="col-2">{{ element.species }}{{ element.other_species }}, {{ element.gender }}</td>
+            <td class="col-7">{{ element.birth_date }}, {{ element.weight }}kg</td>
+            <td class="col-2 d-flex align-items-center justify-content-center flex-wrap">
+                <a class="btn btn-danger btn-outline-dark" href="{% url 'pet_info' pk=element.pk %}" role="button">Szczegóły</a>
+                <a class="btn btn-danger btn-outline-dark" href="{% url 'modify_pet' pk=element.pk %}" role="button">Edytuj</a>
+                <a class="btn btn-danger btn-outline-dark" href="{% url 'delete_pet' pk=element.pk %}" role="button">Usuń</a>
+            </td>
+        </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+{% endblock %}

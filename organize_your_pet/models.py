@@ -4,17 +4,17 @@ from django.contrib.auth.models import User
 
 class Pet(models.Model):
     GENDERS = [
-        ('male', 'Male'),
-        ('female', 'Female'),
+        ('male', 'Samiec'),
+        ('female', 'Samica')
     ]
     SPECIES = [
-        ('dog', 'Dog'),
-        ('cat', 'Cat'),
-        ('parrot', 'Parrot'),
-        ('ferret', 'Ferret'),
-        ('rabbit', 'Rabbit'),
-        ('rodent', 'Rodent'),
-        ('other', 'Other')
+        ('dog', 'Pies'),
+        ('cat', 'Kot'),
+        ('parrot', 'Papuga'),
+        ('ferret', 'Fretka'),
+        ('rabbit', 'Królik'),
+        ('rodent', 'Gryzoń'),
+        ('other', 'Inny')
     ]
     name = models.CharField(max_length=50, blank=True)
     species = models.CharField(max_length=50, choices=SPECIES, default='other')

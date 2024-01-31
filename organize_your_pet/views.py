@@ -3,10 +3,11 @@ from datetime import datetime
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.shortcuts import render, redirect
 from django.http import HttpResponse
+from django.urls import reverse
 from django.views import View
 from django.views.generic import UpdateView
 
-from organize_your_pet.forms import AddPetForm, PetSearchForm
+from organize_your_pet.forms import AddPetForm, PetSearchForm, AddVisitForm, VisitSearchForm
 from organize_your_pet.models import Visit, Pet
 
 
@@ -62,7 +63,7 @@ class PetsListView(LoginRequiredMixin, View):
             name = form.cleaned_data.get('name', '')
             pets = pets.filter(name__icontains=name)
         ctx = {'form': form, 'list_elements': pets}
-        return render(request, 'OYP/pet_list_elements.html', ctx)
+        return render(request, 'OYP/pets_list_elements.html', ctx)
 
 
 class PetDetailView(LoginRequiredMixin, View):
@@ -72,14 +73,25 @@ class PetDetailView(LoginRequiredMixin, View):
         return render(request, 'OYP/pet_detail.html', ctx)
 
 
-class ModifyPetView(LoginRequiredMixin, View):
-    def get(self, request):
-        return HttpResponse('edytuj zwierzaka')
+class ModifyPetView(LoginRequiredMixin, UpdateView):
+    model = Pet
+    template_name = 'OYP/add_form_for_logged_in.html'
+    form_class = AddPetForm
+
+    def get_success_url(self):
+        return reverse('pet_info', args=(self.object.pk,))
 
 
 class DeletePetView(LoginRequiredMixin, View):
     def get(self, request, pk):
-        return HttpResponse('usuń zwierzaka')
+        pet = Pet.objects.get(pk=pk)
+        ctx = {'pet': pet}
+        return render(request, 'OYP/pet_delete_conf.html', ctx)
+
+    def post(self, request, pk):
+        pet = Pet.objects.get(pk=pk)
+        pet.delete()
+        return redirect('pets_list')
 
 
 class BookAppointmentView(LoginRequiredMixin, View):
@@ -89,19 +101,30 @@ class BookAppointmentView(LoginRequiredMixin, View):
 
 class VisitsListView(LoginRequiredMixin, View):
     def get(self, request):
-        return HttpResponse('lista wizyt')
+        visits = Visit.objects.filter(pet__owner=request.user)
+        form = VisitSearchForm(request.GET)
+        if form.is_valid():
+            available_date__date = form.cleaned_data.get('available_date__date', '')
+            pet__name = form.cleaned_data.get('pet__name', '')
+            visits = visits.filter(available_date__date__icontains=available_date__date, pet__name__icontains=pet__name)
+        ctx = {'form': form, 'list_elements': visits}
+        return render(request, 'OYP/visits_list_elements.html', ctx)
 
 
 class VisitDetailView(LoginRequiredMixin, View):
     def get(self, request, pk):
-        return HttpResponse('info o wizycie')
-
-
-class VisitModifyView(LoginRequiredMixin, View):
-    def get(self, request, pk):
-        return HttpResponse('edytowanie info o konkretnej wizycie')
+        visit = Visit.objects.get(pk=pk)
+        ctx = {'visit': visit}
+        return render(request, 'OYP/visit_detail.html', ctx)
 
 
 class DeleteVisitView(LoginRequiredMixin, View):
     def get(self, request, pk):
-        return HttpResponse('usuń wizytę')
+        visit = Visit.objects.get(pk=pk)
+        ctx = {'visit': visit}
+        return render(request, 'OYP/pet_delete_conf.html', ctx)
+
+    def post(self, request, pk):
+        visit = Visit.objects.get(pk=pk)
+        visit.delete()
+        return redirect('visits_list')

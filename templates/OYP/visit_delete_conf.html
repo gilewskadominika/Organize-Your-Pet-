@@ -1,0 +1,13 @@
+{% extends 'accounts/dashboard.html' %}
+{% load static %}
+
+{% block content %}
+  <h2>Odwołanie wizyty</h2>
+  <p>Czy na pewno chcesz odwołać wizytę?</p>
+
+  <form method="post" action="{% url 'delete_visit' pk=pet.pk %}">
+    {% csrf_token %}
+    <button type="submit" class="btn btn-danger btn-outline-dark">Usuń</button>
+    <a href="{% url 'visits_list' %}" class="btn btn-danger btn-outline-dark">Powrót</a>
+  </form>
+{% endblock %}

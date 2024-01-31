@@ -1,0 +1,13 @@
+{% extends 'accounts/dashboard.html' %}
+{% load static %}
+
+{% block content %}
+  <h2>Usuwanie zwierzaka</h2>
+  <p>Czy na pewno chcesz usunąć zwierzaka o imieniu "{{ pet.name }}"?</p>
+
+  <form method="post" action="{% url 'delete_pet' pk=pet.pk %}">
+    {% csrf_token %}
+    <button type="submit" class="btn btn-danger btn-outline-dark">Usuń</button>
+    <a href="{% url 'pets_list' %}" class="btn btn-danger btn-outline-dark">Powrót</a>
+  </form>
+{% endblock %}

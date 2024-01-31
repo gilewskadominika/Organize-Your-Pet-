@@ -27,6 +27,5 @@ urlpatterns = [
     path('book-appointment/', views.BookAppointmentView.as_view(), name='book_appointment'),
     path('visits/list/', views.VisitsListView.as_view(), name='visits_list'),
     path('visit/<int:pk>/', views.VisitDetailView.as_view(), name='visit_info'),
-    path('visit/modify/<int:pk>/', views.VisitModifyView.as_view(), name='visit_modify'),
     path('visit/delete/<int:pk>/', views.DeleteVisitView.as_view(), name='delete_visit')
 ]

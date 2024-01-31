@@ -12,22 +12,21 @@
     <table class="table border-bottom schedules-content">
         <thead>
         <tr class="d-flex text-color-darker">
-            <th scope="col" class="col-1">Imię</th>
-            <th scope="col" class="col-2">Gatunek</th>
-            <th scope="col" class="col-7">Informacje</th>
+            <th scope="col" class="col-1">Data</th>
+            <th scope="col" class="col-2">Klinika</th>
+            <th scope="col" class="col-7">Zwierzę</th>
             <th scope="col" class="col-2"></th>
         </tr>
         </thead>
         <tbody class="text-color-lighter">
             {% for element in list_elements %}
         <tr class="d-flex">
-            <td class="col-1">{{ element.name }}</td>
-            <td class="col-2">{{ element.get_species_display}}{{ element.other_species }}, {{ element.get_gender_display }}</td>
-            <td class="col-7">{{ element.birth_date }}, {{ element.weight }}kg</td>
+            <td class="col-1">{{ element.available_date.date }}</td>
+            <td class="col-2">{{ element.available_date.clinic.name }}</td>
+            <td class="col-7">{{ element.pet.name }}</td>
             <td class="col-2 d-flex align-items-center justify-content-center flex-wrap">
-                <a class="btn btn-danger btn-outline-dark" href="{% url 'pet_info' pk=element.pk %}" role="button">Szczegóły</a>
-                <a class="btn btn-danger btn-outline-dark" href="{% url 'modify_pet' pk=element.pk %}" role="button">Edytuj</a>
-                <a class="btn btn-danger btn-outline-dark" href="{% url 'delete_pet' pk=element.pk %}" role="button">Usuń</a>
+                <a class="btn btn-danger btn-outline-dark" href="{% url 'visit_info_info' pk=element.pk %}" role="button">Szczegóły</a>
+                <a class="btn btn-danger btn-outline-dark" href="{% url 'delete_visit' pk=element.pk %}" role="button">Usuń</a>
             </td>
         </tr>
         {% endfor %}

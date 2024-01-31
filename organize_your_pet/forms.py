@@ -2,7 +2,7 @@ from time import timezone
 
 from django import forms
 
-from organize_your_pet.models import Pet, Visit, AvailableDate
+from organize_your_pet.models import Pet, AvailableDate, Visit
 
 
 class AddPetForm(forms.ModelForm):
@@ -40,12 +40,10 @@ class PetSearchForm(forms.ModelForm):
 
 class BookAppointmentForm(forms.ModelForm):
     class Meta:
-        model = AvailableDate
+        model = Visit
         fields = '__all__'
-        widgets = {
-            'clinic': forms.Select(attrs={'class': 'form-control'}),
-            'doctor': forms.Select(attrs={'class': 'form-control'}),
-            'date': forms.Select(attrs={'class': 'form-control'}),
-            'start_time': forms.Select(attrs={'class': 'form-control'}),
-            'end_time': forms.Select(attrs={'class': 'form-control'}),
-        }
+        # widgets =
+
+    def __init__(self, user, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['pet'].queryset = Pet.objects.filter(owner=user)

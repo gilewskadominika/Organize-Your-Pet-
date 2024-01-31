@@ -1,0 +1,31 @@
+{% extends 'accounts/dashboard.html' %}
+{% load static %}
+{% block content %}
+    <table class="table border-bottom schedules-content">
+        <thead>
+        <tr class="d-flex text-color-darker">
+            <th scope="col" class="col-1">Imię</th>
+            <th scope="col" class="col-2">Nazwisko</th>
+            <th scope="col" class="col-1">Specjalizacja</th>
+            <th scope="col" class="col-3"></th>
+            <th scope="col" class="col-2">
+                <a class="btn btn-danger btn-outline-dark" href="{% url 'dashboard' %}" role="button">Strona główna
+                </a></th>
+        </tr>
+        </thead>
+        <tbody class="text-color-lighter">
+        {% for element in list_elements %}
+            <tr class="d-flex">
+                <td class="col-1">{{ element.first_name }}</td>
+                <td class="col-2">{{ element.last_name }}</td>
+                <td class="col-1">{{ element.specialization }}</td>
+                <td class="col-3"></td>
+                <td class="col-2"><a class="btn btn-danger btn-outline-dark"
+                                     href="{% url 'doctor_info' clinic_pk=clinic.pk doctor_pk=element.pk %}"
+                                     role="button">Dostępne terminy
+                </a></td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+{% endblock %}

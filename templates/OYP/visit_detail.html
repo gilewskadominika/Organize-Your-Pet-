@@ -4,12 +4,11 @@
 <table class="table border-bottom schedules-content">
         <thead>
         <tr class="d-flex text-color-darker">
-            <th scope="col" class="col-2">Data</th>
-            <th scope="col" class="col-2">Klinika</th>
-            <th scope="col" class="col-2">Adres</th>
-            <th scope="col" class="col-2">Lekarz</th>
+            <th scope="col" class="col-1">Data</th>
+            <th scope="col" class="col-1">Klinika</th>
+            <th scope="col" class="col-1">Adres</th>
+            <th scope="col" class="col-1">Lekarz</th>
             <th scope="col" class="col-1">Zwierzak</th>
-            <th scope="col" class="col-4">Opis</th>
             <th scope="col" class="col-2">
             </th>
         </tr>
@@ -21,10 +20,8 @@
             <td class="col-1">{{ visit.available_date.clinic.address }}, {{ visit.available_date.clinic.city }}</td>
             <td class="col-1">{{ visit.available_date.doctor }}</td>
             <td class="col-1">{{ visit.pet.name }}</td>
-            <td class="col-1">{{ visit.description }}kg</td>
             <td class="col-5 d-flex align-items-center justify-content-center flex-wrap">
-                <a class="btn btn-danger btn-outline-dark" href="{% url 'modify_pet' pk=pet.pk %}" role="button">Edytuj</a>
-                <a class="btn btn-danger btn-outline-dark" href="{% url 'pets_list' %}" role="button">Powrót</a>
+                <a class="btn btn-danger btn-outline-dark" href="{% url 'visits_list' %}" role="button">Powrót</a>
             </td>
         </tr>
         </tbody>

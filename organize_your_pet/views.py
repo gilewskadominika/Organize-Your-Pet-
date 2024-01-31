@@ -1,17 +1,10 @@
-from datetime import datetime
-
-from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.shortcuts import render, redirect
-from django.http import HttpResponse
 from django.urls import reverse
 from django.views import View
 from django.views.generic import UpdateView
-
 from organize_your_pet.forms import AddPetForm, PetSearchForm, BookAppointmentForm
-from organize_your_pet.models import Visit, Pet
-
-
-# from organize_your_pet.models import
+from organize_your_pet.models import Visit, Pet, Clinic, Doctor
 
 
 class IndexView(View):
@@ -94,14 +87,31 @@ class DeletePetView(LoginRequiredMixin, View):
         return redirect('pets_list')
 
 
-class BookAppointmentView(LoginRequiredMixin, View):
+class ClinicsListView(LoginRequiredMixin, View):
     def get(self, request):
-        form = BookAppointmentForm()
-        ctx = {'form': form}
+        clinics = Clinic.objects.all()
+        ctx = {'list_elements': clinics}
+        return render(request, 'OYP/clinics_list_elements.html', ctx)
+
+
+class DoctorsListView(LoginRequiredMixin, View):
+    def get(self, request, pk):
+        clinic = Clinic.objects.get(pk=pk)
+        doctors = Doctor.objects.filter(clinic_id=clinic.pk)
+        ctx = {'clinic': clinic, 'list_elements': doctors}
+        return render(request, 'OYP/doctors_list_elements.html', ctx)
+
+
+class DoctorDetailView(LoginRequiredMixin, View):
+    def get(self, request, clinic_pk, doctor_pk):
+        form = BookAppointmentForm(user=request.user)
+        clinic = Clinic.objects.get(pk=clinic_pk)
+        doctor = Doctor.objects.get(pk=doctor_pk)
+        ctx = {'clinic_pk': clinic, 'doctor_pk': doctor, 'form': form}
         return render(request, 'OYP/add_form_for_logged_in.html', ctx)
 
     def post(self, request):
-        form = BookAppointmentForm(request.POST)
+        form = BookAppointmentForm(data=request.POST, user=request.user)
         ctx = {'form': form}
         if form.is_valid():
             visit = form.save(commit=False)
@@ -109,6 +119,22 @@ class BookAppointmentView(LoginRequiredMixin, View):
             visit.save()
             return redirect('visits_list')
         return render(request, 'OYP/add_form_for_logged_in.html', ctx)
+
+# class BookAppointmentView(LoginRequiredMixin, View):
+#     def get(self, request):
+#         form = BookAppointmentForm(user=request.user)
+#         ctx = {'form': form}
+#         return render(request, 'OYP/add_form_for_logged_in.html', ctx)
+#
+#     def post(self, request):
+#         form = BookAppointmentForm(data=request.POST, user=request.user)
+#         ctx = {'form': form}
+#         if form.is_valid():
+#             visit = form.save(commit=False)
+#             visit.pet.owner = self.request.user
+#             visit.save()
+#             return redirect('visits_list')
+#         return render(request, 'OYP/add_form_for_logged_in.html', ctx)
 
 
 class VisitsListView(LoginRequiredMixin, View):

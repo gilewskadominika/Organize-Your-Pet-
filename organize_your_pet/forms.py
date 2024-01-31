@@ -1,6 +1,8 @@
+from time import timezone
+
 from django import forms
 
-from organize_your_pet.models import Pet, Visit
+from organize_your_pet.models import Pet, Visit, AvailableDate
 
 
 class AddPetForm(forms.ModelForm):
@@ -36,24 +38,14 @@ class PetSearchForm(forms.ModelForm):
         widgets = {'name': forms.TextInput(attrs={'class': 'form-control'})}
 
 
-class AddVisitForm(forms.ModelForm):
+class BookAppointmentForm(forms.ModelForm):
     class Meta:
-        model = Visit
+        model = AvailableDate
         fields = '__all__'
         widgets = {
-            'available_date': forms.Select(attrs={'class': 'form-control'}),
-            'description': forms.Textarea(attrs={'class': 'form-control'}),
+            'clinic': forms.Select(attrs={'class': 'form-control'}),
+            'doctor': forms.Select(attrs={'class': 'form-control'}),
+            'date': forms.Select(attrs={'class': 'form-control'}),
+            'start_time': forms.Select(attrs={'class': 'form-control'}),
+            'end_time': forms.Select(attrs={'class': 'form-control'}),
         }
-
-
-class VisitSearchForm(forms.ModelForm):
-    available_date = forms.DateField(widget=forms.DateInput(attrs={'class': 'form-control'}))
-    pet = forms.CharField(widget=forms.TextInput(attrs={'class': 'form-control'}))
-
-    class Meta:
-        model = Visit
-        fields = ('pet', 'available_date')
-
-    def __init__(self, user, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        self.fields['pet__name'].queryset = Pet.objects.filter(owner=user)

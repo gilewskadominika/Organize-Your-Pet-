@@ -7,7 +7,7 @@ from django.urls import reverse
 from django.views import View
 from django.views.generic import UpdateView
 
-from organize_your_pet.forms import AddPetForm, PetSearchForm, AddVisitForm, VisitSearchForm
+from organize_your_pet.forms import AddPetForm, PetSearchForm, BookAppointmentForm
 from organize_your_pet.models import Visit, Pet
 
 
@@ -96,18 +96,25 @@ class DeletePetView(LoginRequiredMixin, View):
 
 class BookAppointmentView(LoginRequiredMixin, View):
     def get(self, request):
-        return HttpResponse('zabookuj wizytę u weta')
+        form = BookAppointmentForm()
+        ctx = {'form': form}
+        return render(request, 'OYP/add_form_for_logged_in.html', ctx)
+
+    def post(self, request):
+        form = BookAppointmentForm(request.POST)
+        ctx = {'form': form}
+        if form.is_valid():
+            visit = form.save(commit=False)
+            visit.pet.owner = self.request.user
+            visit.save()
+            return redirect('visits_list')
+        return render(request, 'OYP/add_form_for_logged_in.html', ctx)
 
 
 class VisitsListView(LoginRequiredMixin, View):
     def get(self, request):
         visits = Visit.objects.filter(pet__owner=request.user)
-        form = VisitSearchForm(request.GET)
-        if form.is_valid():
-            available_date__date = form.cleaned_data.get('available_date__date', '')
-            pet__name = form.cleaned_data.get('pet__name', '')
-            visits = visits.filter(available_date__date__icontains=available_date__date, pet__name__icontains=pet__name)
-        ctx = {'form': form, 'list_elements': visits}
+        ctx = {'list_elements': visits}
         return render(request, 'OYP/visits_list_elements.html', ctx)
 
 

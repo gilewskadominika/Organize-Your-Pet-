@@ -104,37 +104,25 @@ class DoctorsListView(LoginRequiredMixin, View):
 
 class DoctorDetailView(LoginRequiredMixin, View):
     def get(self, request, clinic_pk, doctor_pk):
-        form = BookAppointmentForm(user=request.user)
         clinic = Clinic.objects.get(pk=clinic_pk)
         doctor = Doctor.objects.get(pk=doctor_pk)
+        form = BookAppointmentForm(user=request.user, doctor=doctor, clinic=clinic)
         ctx = {'clinic_pk': clinic, 'doctor_pk': doctor, 'form': form}
         return render(request, 'OYP/add_form_for_logged_in.html', ctx)
 
-    def post(self, request):
-        form = BookAppointmentForm(data=request.POST, user=request.user)
-        ctx = {'form': form}
+    def post(self, request, clinic_pk, doctor_pk):
+        clinic = Clinic.objects.get(pk=clinic_pk)
+        doctor = Doctor.objects.get(pk=doctor_pk)
+        form = BookAppointmentForm(data=request.POST, user=request.user, doctor=doctor, clinic=clinic)
+        ctx = {'clinic_pk': clinic, 'doctor_pk': doctor, 'form': form}
         if form.is_valid():
             visit = form.save(commit=False)
+            visit.available_date.is_reserved = True
             visit.pet.owner = self.request.user
+            visit.available_date.save()
             visit.save()
             return redirect('visits_list')
         return render(request, 'OYP/add_form_for_logged_in.html', ctx)
-
-# class BookAppointmentView(LoginRequiredMixin, View):
-#     def get(self, request):
-#         form = BookAppointmentForm(user=request.user)
-#         ctx = {'form': form}
-#         return render(request, 'OYP/add_form_for_logged_in.html', ctx)
-#
-#     def post(self, request):
-#         form = BookAppointmentForm(data=request.POST, user=request.user)
-#         ctx = {'form': form}
-#         if form.is_valid():
-#             visit = form.save(commit=False)
-#             visit.pet.owner = self.request.user
-#             visit.save()
-#             return redirect('visits_list')
-#         return render(request, 'OYP/add_form_for_logged_in.html', ctx)
 
 
 class VisitsListView(LoginRequiredMixin, View):

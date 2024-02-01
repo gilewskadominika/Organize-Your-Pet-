@@ -27,7 +27,6 @@ urlpatterns = [
     path('clinics/list/', views.ClinicsListView.as_view(), name='clinics_list'),
     path('clinic/<int:pk>/doctors/list', views.DoctorsListView.as_view(), name='doctors_list'),
     path('clinic/<int:clinic_pk>/doctor/<int:doctor_pk>/', views.DoctorDetailView.as_view(), name='doctor_info'),
-    # path('book-appointment/', views.BookAppointmentView.as_view(), name='book_appointment'),
     path('visits/list/', views.VisitsListView.as_view(), name='visits_list'),
     path('visit/<int:pk>/', views.VisitDetailView.as_view(), name='visit_info'),
     path('visit/delete/<int:pk>/', views.DeleteVisitView.as_view(), name='delete_visit')

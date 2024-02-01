@@ -1,14 +1,6 @@
 {% extends 'accounts/dashboard.html' %}
 {% load static %}
 {% block content %}
-    {% if form %}
-        <div class="col-md-2">
-            <form>
-                {{ form.as_div }}
-                <button class="btn btn-danger btn-outline-dark" type="button">Szukaj</button>
-            </form>
-        </div>
-    {% endif %}
     <table class="table border-bottom schedules-content">
         <thead>
         <tr class="d-flex text-color-darker">

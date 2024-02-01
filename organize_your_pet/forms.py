@@ -44,6 +44,7 @@ class BookAppointmentForm(forms.ModelForm):
         fields = '__all__'
         # widgets =
 
-    def __init__(self, user, *args, **kwargs):
+    def __init__(self, user, doctor, clinic, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.fields['pet'].queryset = Pet.objects.filter(owner=user)
+        self.fields['available_date'].queryset = AvailableDate.objects.filter(doctor=doctor, clinic=clinic, is_reserved=False)

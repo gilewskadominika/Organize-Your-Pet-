@@ -13,10 +13,16 @@ class RegistrationForm(forms.ModelForm):
 
     def clean(self):
         cleaned_data = super().clean()
+        first_name = cleaned_data.get('first_name')
+        last_name = cleaned_data.get('last_name')
         p1 = cleaned_data.get('password')
         p2 = cleaned_data.get('re_password')
         if p1 is None or p2 is None or p1 != p2:
             raise ValidationError('Podane hasła nie są takie same.')
+        if len(first_name) < 3:
+            raise ValidationError('Podane imię jest za krótkie')
+        if len(last_name) < 3:
+            raise ValidationError('Podane nazwisko jest za krótkie')
         return cleaned_data
 
 

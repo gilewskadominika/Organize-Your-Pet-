@@ -1,6 +1,7 @@
 from time import timezone
 
 from django import forms
+from django.core.exceptions import ValidationError
 
 from organize_your_pet.models import Pet, AvailableDate, Visit
 
@@ -29,6 +30,23 @@ class AddPetForm(forms.ModelForm):
                    'other_species': forms.TextInput(attrs={'class': 'form-control'}),
                    'breed': forms.TextInput(attrs={'class': 'form-control'}),
                    'chip': forms.CheckboxInput}
+
+    def clean(self):
+        cleaned_data = super().clean()
+        name = cleaned_data.get('name')
+        birth_date = cleaned_data.get('birth_date')
+        species = cleaned_data.get('species')
+        other_species = cleaned_data.get('other_species')
+        gender = cleaned_data.get('gender')
+        breed = cleaned_data.get('breed')
+        weight = cleaned_data.get('weight')
+        chip = cleaned_data.get('chip')
+        existing_pet = Pet.objects.filter(name=name, birth_date=birth_date, species=species, other_species=other_species,
+                                          gender=gender, breed=breed, weight=weight, chip=chip).first()
+        if existing_pet:
+            raise ValidationError('Podane zwierzę już istnieje')
+
+        return cleaned_data
 
 
 class PetSearchForm(forms.ModelForm):

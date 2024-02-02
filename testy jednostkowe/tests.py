@@ -1,11 +1,9 @@
-from datetime import date, datetime
-
 import pytest
 from django.contrib.auth.models import User
 from django.test import Client
 from django.urls import reverse
 
-from accounts.forms import RegistrationForm
+from accounts.forms import RegistrationForm, LoginForm
 from organize_your_pet.forms import AddPetForm
 from organize_your_pet.models import Pet, Clinic, Doctor, AvailableDate, Visit
 
@@ -45,37 +43,207 @@ def test_visit_count(visits):
 
 
 @pytest.mark.django_db
-def test_list_pets(pets, user):
+def test_registration_user_get():
     client = Client()
-    client.force_login(user)
-    url = reverse('pets_list')
+    url = reverse('registration_view')
     response = client.get(url)
     assert response.status_code == 200
-    assert response.context['list_elements'].count() == len(pets)
-    for pet in pets:
-        assert pet in response.context['list_elements']
+    assert isinstance(response.context['form'], RegistrationForm)
 
 
 @pytest.mark.django_db
-def test_search_pet(pets, user):
+def test_registration_user_post():
     client = Client()
-    client.force_login(user)
-    url = reverse('pets_list')
-    url = f'{url}?name=k'
-    response = client.get(url)
-    assert response.status_code == 200
-    assert response.context['list_elements'].count() == 1
-    assert response.context['list_elements'][0] == pets[1]
+    url = reverse('registration_view')
+    data = {
+        'username': 'kazzzzziu',
+        'first_name': 'Dupa',
+        'last_name': 'DupaDupa',
+        'email': 'ziom@wp.pl',
+        'password': 'DupaDupa',
+        're_password': 'DupaDupa',
+    }
+    response = client.post(url, data)
+    assert response.status_code == 302
+    assert response.url == reverse('dashboard')
 
 
 @pytest.mark.django_db
-def test_list_pets_not_login(pets):
-    pet = Pet.objects.first()
+def test_registration_user_if_login(user):
     client = Client()
-    url = reverse('pets_list')
+    client.force_login(user)
+    url = reverse('registration_view')
+    response = client.get(url)
+    assert response.status_code == 302
+    assert response.url == reverse('dashboard')
+
+# ----------------------------------------------------------------
+
+
+@pytest.mark.django_db
+def test_login_user_get():
+    client = Client()
+    url = reverse('login_view')
+    response = client.get(url)
+    assert response.status_code == 200
+    assert isinstance(response.context['form'], LoginForm)
+
+
+# @pytest.mark.django_db
+# def test_login_user_post(user):
+#     user = User.objects.first()
+#     client = Client()
+#     url = reverse('login_view')
+#     data = {
+#         'username': 'test',
+#         'password': 'DupaDupa'
+#     }
+#     response = client.post(url, data)
+#     assert user.is_authenticated
+#     assert response.status_code == 302
+    # assert response.url == reverse('dashboard')
+
+
+@pytest.mark.django_db
+def test_login_user_if_login(user):
+    client = Client()
+    client.force_login(user)
+    url = reverse('login_view')
+    response = client.get(url)
+    assert response.status_code == 302
+    assert response.url == reverse('dashboard')
+
+# ----------------------------------------------------------------
+
+
+@pytest.mark.django_db
+def test_logout_user_not_login():
+    client = Client()
+    url = reverse('logout_view')
     response = client.get(url)
     assert response.status_code == 302
     assert response.url.startswith(reverse('login_view'))
+
+
+@pytest.mark.django_db
+def test_logout_user(user):
+    client = Client()
+    client.force_login(user)
+    url = reverse('logout_view')
+    response = client.get(url)
+    assert response.status_code == 302
+    assert '_auth_user_id' not in client.session
+    assert response.url == reverse('index')
+
+# ----------------------------------------------------------------
+
+
+@pytest.mark.django_db
+def test_profil_view_if_login(user):
+    client = Client()
+    client.force_login(user)
+    url = reverse('profile_view')
+    response = client.get(url)
+    assert response.status_code == 200
+    assert response.context['username'] == user.username
+
+
+@pytest.mark.django_db
+def test_profil_view_not_login():
+    client = Client()
+    url = reverse('profile_view')
+    response = client.get(url)
+    assert response.status_code == 302
+    assert response.url.startswith(reverse('login_view'))
+
+# ----------------------------------------------------------------
+
+
+@pytest.mark.django_db
+def test_profil_edit_get(user):
+    user = User.objects.first()
+    client = Client()
+    client.force_login(user)
+    url = reverse('profile_edit_view', kwargs={'pk': user.pk})
+    response = client.get(url)
+    assert response.status_code == 200
+
+
+@pytest.mark.django_db
+def test_profil_edit_post(user):
+    user = User.objects.first()
+    client = Client()
+    client.force_login(user)
+    data = {
+        'username': 'kaziu'
+    }
+    url = reverse('profile_edit_view', kwargs={'pk': user.pk})
+    response = client.post(url, data)
+    assert response.status_code == 302
+    assert response.url == reverse('profile_view')
+    assert User.objects.get(username=data['username'])
+
+# ----------------------------------------------------------------
+
+
+@pytest.mark.django_db
+def test_index_view_not_login():
+    client = Client()
+    url = reverse('index')
+    response = client.get(url)
+    assert response.status_code == 200
+
+
+@pytest.mark.django_db
+def test_index_view_if_login(user):
+    client = Client()
+    client.force_login(user)
+    url = reverse('index')
+    response = client.get(url)
+    assert response.status_code == 302
+    assert response.url == reverse('dashboard')
+
+# ----------------------------------------------------------------
+
+
+@pytest.mark.django_db
+def test_about_view_not_login():
+    client = Client()
+    url = reverse('about')
+    response = client.get(url)
+    assert response.status_code == 200
+
+
+@pytest.mark.django_db
+def test_about_view_if_login(user):
+    client = Client()
+    client.force_login(user)
+    url = reverse('about')
+    response = client.get(url)
+    assert response.status_code == 302
+    assert response.url == reverse('dashboard')
+
+# ----------------------------------------------------------------
+
+
+@pytest.mark.django_db
+def test_dashboard_view_not_login():
+    client = Client()
+    url = reverse('dashboard')
+    response = client.get(url)
+    assert response.status_code == 302
+    assert response.url.startswith(reverse('login_view'))
+
+
+@pytest.mark.django_db
+def test_dashboard_view_if_login(user, visits):
+    visit = Visit.objects.filter(pet__owner=user).order_by('available_date__date').first()
+    client = Client()
+    client.force_login(user)
+    url = reverse('dashboard')
+    response = client.get(url)
+    assert response.status_code == 200
+    assert Visit.objects.filter(pet__owner=user).order_by('available_date__date').first() == visit
 
 # ----------------------------------------------------------------
 
@@ -120,6 +288,41 @@ def test_add_pet_post(user):
 def test_add_pet_not_login():
     client = Client()
     url = reverse('add_pet')
+    response = client.get(url)
+    assert response.status_code == 302
+    assert response.url.startswith(reverse('login_view'))
+
+# ----------------------------------------------------------------
+
+
+@pytest.mark.django_db
+def test_list_pets(pets, user):
+    client = Client()
+    client.force_login(user)
+    url = reverse('pets_list')
+    response = client.get(url)
+    assert response.status_code == 200
+    assert response.context['list_elements'].count() == len(pets)
+    for pet in pets:
+        assert pet in response.context['list_elements']
+
+
+@pytest.mark.django_db
+def test_search_pet(pets, user):
+    client = Client()
+    client.force_login(user)
+    url = reverse('pets_list')
+    url = f'{url}?name=k'
+    response = client.get(url)
+    assert response.status_code == 200
+    assert response.context['list_elements'].count() == 1
+    assert response.context['list_elements'][0] == pets[1]
+
+
+@pytest.mark.django_db
+def test_list_pets_not_login():
+    client = Client()
+    url = reverse('pets_list')
     response = client.get(url)
     assert response.status_code == 302
     assert response.url.startswith(reverse('login_view'))
@@ -202,6 +405,17 @@ def test_detail_pet_not_login(pets):
 
 
 @pytest.mark.django_db
+def test_delete_visit_get(pets, user):
+    pet = Pet.objects.first()
+    client = Client()
+    client.force_login(user)
+    url = reverse('delete_pet', kwargs={'pk': pet.pk})
+    response = client.get(url)
+    assert response.status_code == 200
+    assert response.context['pet'] == pet
+
+
+@pytest.mark.django_db
 def test_delete_pet_post(user, pets):
     pet = Pet.objects.first()
     client = Client()
@@ -211,6 +425,7 @@ def test_delete_pet_post(user, pets):
     assert response.status_code == 302
     pet_pks = [pet.pk for pet in Pet.objects.all()]
     assert pet.pk not in pet_pks
+    assert response.url == reverse('pets_list')
 
 
 @pytest.mark.django_db
@@ -271,6 +486,29 @@ def test_list_clinics_not_login(clinics):
 # ----------------------------------------------------------------
 
 
+# @pytest.mark.django_db
+# def test_doctor_detail(doctors, user):
+#     client = Client()
+#     client.force_login(user)
+#     url = reverse('doctors_list', kwargs={'clinic_id': doctors[0].clinic_id})
+#     response = client.get(url)
+#     assert response.status_code == 200
+#     assert response.context['list_elements'].count() == len(doctors)
+#     for doctor in doctors:
+#         assert doctor in response.context['list_elements']
+#
+#
+# @pytest.mark.django_db
+# def test_doctor_detail_not_login(doctors):
+#     client = Client()
+#     url = reverse('doctors_list', kwargs={'clinic_id': doctors[0].clinic_id})
+#     response = client.get(url)
+#     assert response.status_code == 302
+#     assert response.url.startswith(reverse('login_view'))
+
+# ----------------------------------------------------------------
+
+
 @pytest.mark.django_db
 def test_list_visits(visits, user):
     client = Client()
@@ -318,6 +556,17 @@ def test_visit_detail_not_login(visits):
 
 
 @pytest.mark.django_db
+def test_delete_visit_get(visits, user):
+    visit = Visit.objects.first()
+    client = Client()
+    client.force_login(user)
+    url = reverse('delete_visit', kwargs={'pk': visit.pk})
+    response = client.get(url)
+    assert response.status_code == 200
+    assert response.context['visit'] == visit
+
+
+@pytest.mark.django_db
 def test_delete_visit_post(visits, user):
     visit = Visit.objects.first()
     client = Client()
@@ -327,6 +576,7 @@ def test_delete_visit_post(visits, user):
     assert response.status_code == 302
     visit_pks = [visit.pk for visit in Visit.objects.all()]
     assert visit.pk not in visit_pks
+    assert response.url == reverse('visits_list')
 
 
 @pytest.mark.django_db
@@ -337,121 +587,3 @@ def test_delete_visit_not_login(visits):
     response = client.get(url)
     assert response.status_code == 302
     assert response.url.startswith(reverse('login_view'))
-
-# ----------------------------------------------------------------
-
-
-@pytest.mark.django_db
-def test_registration_user():
-    client = Client()
-    url = reverse('registration_view')
-    response = client.get(url)
-    assert response.status_code == 200
-    assert isinstance(response.context['form'], RegistrationForm)
-
-
-@pytest.mark.django_db
-def test_registration_user_if_login(user):
-    client = Client()
-    client.force_login(user)
-    url = reverse('registration_view')
-    response = client.get(url)
-    assert response.status_code == 302
-    assert response.url.startswith(reverse('dashboard'))
-
-# ----------------------------------------------------------------
-
-
-# @pytest.mark.django_db
-# def test_login_user():
-#     user = User.objects.create(username='test', password='DupaDupa')
-#     client = Client()
-#     client.login(username='test', password='DupaDupa')
-#     url = reverse('login_view')
-#     response = client.post(url)
-#     assert response.status_code == 302
-
-
-@pytest.mark.django_db
-def test_login_user_if_login(user):
-    client = Client()
-    client.force_login(user)
-    url = reverse('login_view')
-    response = client.get(url)
-    assert response.status_code == 302
-    assert response.url.startswith(reverse('dashboard'))
-
-# ----------------------------------------------------------------
-
-
-@pytest.mark.django_db
-def test_logout_user_not_login():
-    client = Client()
-    url = reverse('logout_view')
-    response = client.get(url)
-    assert response.status_code == 302
-    assert response.url.startswith(reverse('login_view'))
-
-
-# @pytest.mark.django_db
-# def test_logout_user():
-#     user = User.objects.create(username='jajkon', password='Jajkon')
-#     client = Client(username='jajkon', password='Jajkon')
-#     client.login()
-#     url = reverse('logout_view')
-#     response = client.get(url)
-#     assert response.status_code == 302
-#     assert '_auth_user_id' not in client.session
-
-
-# ----------------------------------------------------------------
-
-
-@pytest.mark.django_db
-def test_index_view_not_login():
-    client = Client()
-    url = reverse('index')
-    response = client.get(url)
-    assert response.status_code == 200
-
-
-@pytest.mark.django_db
-def test_index_view_if_login(user):
-    client = Client()
-    client.force_login(user)
-    url = reverse('index')
-    response = client.get(url)
-    assert response.status_code == 302
-    assert response.url.startswith(reverse('dashboard'))
-
-# ----------------------------------------------------------------
-
-
-@pytest.mark.django_db
-def test_about_view_not_login():
-    client = Client()
-    url = reverse('about')
-    response = client.get(url)
-    assert response.status_code == 200
-
-
-@pytest.mark.django_db
-def test_about_view_if_login(user):
-    client = Client()
-    client.force_login(user)
-    url = reverse('about')
-    response = client.get(url)
-    assert response.status_code == 302
-    assert response.url.startswith(reverse('dashboard'))
-
-# ----------------------------------------------------------------
-
-
-@pytest.mark.django_db
-def test_dashboard_view_not_login():
-    client = Client()
-    url = reverse('dashboard')
-    response = client.get(url)
-    assert response.status_code == 302
-    assert response.url.startswith(reverse('login_view'))
-

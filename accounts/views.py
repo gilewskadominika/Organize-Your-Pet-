@@ -1,7 +1,6 @@
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.contrib.auth.models import User
-from django.http import HttpResponse
 from django.shortcuts import render, redirect
 from django.urls import reverse
 from django.views import View
@@ -27,7 +26,7 @@ class RegistrationView(View):
             user.set_password(form.cleaned_data.get('password'))
             user.save()
             login(request, user)
-            return redirect('index')
+            return redirect('dashboard')
         return render(request, 'OYP/add_form_for_unlogged.html', ctx)
 
 

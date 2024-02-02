@@ -147,5 +147,7 @@ class DeleteVisitView(LoginRequiredMixin, View):
 
     def post(self, request, pk):
         visit = Visit.objects.get(pk=pk)
+        visit.available_date.is_reserved = False
+        visit.available_date.save()
         visit.delete()
         return redirect('visits_list')

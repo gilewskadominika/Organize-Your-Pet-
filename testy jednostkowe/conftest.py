@@ -8,7 +8,7 @@ from organize_your_pet.models import Pet, Clinic, Doctor, AvailableDate, Visit
 
 @pytest.fixture
 def user():
-    return User.objects.create(username='test', password='DupaDupa')
+    return User.objects.create()
 
 
 @pytest.fixture

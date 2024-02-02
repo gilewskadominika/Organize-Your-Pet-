@@ -4,7 +4,7 @@ from django.test import Client
 from django.urls import reverse
 
 from accounts.forms import RegistrationForm, LoginForm
-from organize_your_pet.forms import AddPetForm
+from organize_your_pet.forms import AddPetForm, BookAppointmentForm
 from organize_your_pet.models import Pet, Clinic, Doctor, AvailableDate, Visit
 
 # sprawdzenie fixtures
@@ -463,45 +463,67 @@ def test_list_clinics_not_login(clinics):
 # ----------------------------------------------------------------
 
 
-# @pytest.mark.django_db
-# def test_list_doctors(doctors, user):
-#     client = Client()
-#     client.force_login(user)
-#     url = reverse('doctors_list', kwargs={'clinic_id': doctors[0].clinic_id})
-#     response = client.get(url)
-#     assert response.status_code == 200
-#     assert response.context['list_elements'].count() == len(doctors)
-#     for doctor in doctors:
-#         assert doctor in response.context['list_elements']
-#
-#
-# @pytest.mark.django_db
-# def test_list_doctors_not_login(doctors):
-#     client = Client()
-#     url = reverse('doctors_list', kwargs={'clinic_id': doctors[0].clinic_id})
-#     response = client.get(url)
-#     assert response.status_code == 302
-#     assert response.url.startswith(reverse('login_view'))
+@pytest.mark.django_db
+def test_list_doctors(doctors, user, clinics):
+    clinic = Clinic.objects.first()
+    doctors = Doctor.objects.filter(clinic_id=clinic.pk)
+    client = Client()
+    client.force_login(user)
+    url = reverse('doctors_list', kwargs={'pk': clinic.pk})
+    response = client.get(url)
+    assert response.status_code == 200
+    assert response.context['list_elements'].count() == len(doctors)
+    assert response.context['clinic'] == clinic
+    for doctor in doctors:
+        assert doctor in response.context['list_elements']
+
+
+@pytest.mark.django_db
+def test_list_doctors_not_login(clinics):
+    client = Client()
+    url = reverse('doctors_list', kwargs={'pk': clinics[0].pk})
+    response = client.get(url)
+    assert response.status_code == 302
+    assert response.url.startswith(reverse('login_view'))
 
 # ----------------------------------------------------------------
 
 
 # @pytest.mark.django_db
-# def test_doctor_detail(doctors, user):
+# def test_doctor_detail_get(doctors, user, clinics):
+#     clinic = Clinic.objects.first()
+#     doctor = Doctor.objects.filter(clinic_id=clinic.pk).first()
 #     client = Client()
 #     client.force_login(user)
-#     url = reverse('doctors_list', kwargs={'clinic_id': doctors[0].clinic_id})
+#     url = reverse('doctors_list', kwargs={'clinic_pk': clinic.pk, 'doctor_pk': doctor.pk})
 #     response = client.get(url)
 #     assert response.status_code == 200
-#     assert response.context['list_elements'].count() == len(doctors)
-#     for doctor in doctors:
-#         assert doctor in response.context['list_elements']
+#     assert isinstance(response.context['form'], BookAppointmentForm)
 #
 #
 # @pytest.mark.django_db
-# def test_doctor_detail_not_login(doctors):
+# def test_doctor_detail_post(user, clinics, doctors, pets, available_dates):
+#     date = AvailableDate.objects.filter('date').first()
+#     pet = Pet.objects.first()
+#     clinic = Clinic.objects.first()
+#     doctor = Doctor.objects.filter(clinic_id=clinic.pk).first()
 #     client = Client()
-#     url = reverse('doctors_list', kwargs={'clinic_id': doctors[0].clinic_id})
+#     client.force_login(user)
+#     data = {
+#         'pet': pet,
+#         'available_date': [d.id for d in date],
+#         'description': 'łapa'
+#     }
+#     url = reverse('doctors_list', kwargs={'clinic_pk': clinic.pk, 'doctor_pk': doctor.pk})
+#     response = client.get(url, data)
+#     assert response.status_code == 302
+#     assert response.url == reverse('visits_list')
+#
+#
+# @pytest.mark.django_db
+# def test_doctor_detail_not_login(clinics, doctors):
+#     client = Client()
+#     url = reverse('doctors_list', kwargs={'clinic_pk': clinics[0].pk, 'doctor_pk': doctors[0].pk})
 #     response = client.get(url)
 #     assert response.status_code == 302
 #     assert response.url.startswith(reverse('login_view'))

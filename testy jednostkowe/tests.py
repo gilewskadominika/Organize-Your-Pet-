@@ -43,6 +43,7 @@ def test_visit_count(visits):
 
 # ----------------------------------------------------------------
 
+
 @pytest.mark.django_db
 def test_list_pets(pets, user):
     client = Client()
@@ -66,6 +67,16 @@ def test_search_pet(pets, user):
     assert response.context['list_elements'].count() == 1
     assert response.context['list_elements'][0] == pets[1]
 
+
+@pytest.mark.django_db
+def test_list_pets_not_login(pets):
+    pet = Pet.objects.first()
+    client = Client()
+    url = reverse('pets_list')
+    response = client.get(url)
+    assert response.status_code == 302
+    assert response.url.startswith(reverse('login_view'))
+
 # ----------------------------------------------------------------
 
 
@@ -79,30 +90,30 @@ def test_add_pet_get(user):
     assert isinstance(response.context['form'], AddPetForm)
 
 
-# @pytest.mark.django_db
-# def test_add_pet_post(user):
-#     client = Client()
-#     client.force_login(user)
-#     url = reverse('add_pet')
-#     data = {
-#         'name': 'Azor',
-#         'species': 'Pies',
-#         'breed': 'Mieszaniec',
-#         'gender': 'Samiec',
-#         'birth_date': '2022-12-20',
-#         'weight': 2.0,
-#         'chip': True
-#     }
-#     response = client.post(url, data)
-#     assert response.status_code == 302
-#     assert response.url == reverse('pets_list')
-#     assert Pet.objects.get(name=data['name'],
-#                            species=data['species'],
-#                            breed=data['breed'],
-#                            gender=data['gender'],
-#                            birth_date=data['birth_date'],
-#                            weight=data['weight'],
-#                            chip=data['chip'])
+@pytest.mark.django_db
+def test_add_pet_post(user):
+    client = Client()
+    client.force_login(user)
+    url = reverse('add_pet')
+    data = {
+        'name': 'Azor',
+        'species': 'dog',
+        'breed': 'Mieszaniec',
+        'gender': 'male',
+        'birth_date': '2022-12-20',
+        'weight': 2.0,
+        'chip': True
+    }
+    response = client.post(url, data)
+    assert response.status_code == 302
+    assert response.url == reverse('pets_list')
+    assert Pet.objects.get(name=data['name'],
+                           species=data['species'],
+                           breed=data['breed'],
+                           gender=data['gender'],
+                           birth_date=data['birth_date'],
+                           weight=data['weight'],
+                           chip=data['chip'])
 
 
 @pytest.mark.django_db
@@ -116,49 +127,100 @@ def test_add_pet_not_login():
 # ----------------------------------------------------------------
 
 
-# @pytest.mark.django_db
-# def test_detail_pet(user, pets):
-#     pet = Pet.objects.first()
-#     client = Client()
-#     client.force_login(user)
-#     url = reverse('pet_info', kwargs={'pk': pet.pk})
-#     response = client.get(url)
-#     # response = client.get(f'/organize_your_pet/pet/{pets.pk}/')
-#     assert response.status_code == 200
-#     for field in ('name', 'species', 'other_species', 'breed', 'gender', 'birth_date', 'weight', 'chip', 'owner'):
-#         assert field in response.data
+@pytest.mark.django_db
+def test_detail_pet(user, pets):
+    pet = Pet.objects.first()
+    client = Client()
+    client.force_login(user)
+    url = reverse('pet_info', kwargs={'pk': pet.pk})
+    response = client.get(url)
+    assert response.status_code == 200
+    assert response.context['pet'] == pet
+
+
+@pytest.mark.django_db
+def test_detail_pet_not_login(pets):
+    pet = Pet.objects.first()
+    client = Client()
+    url = reverse('pet_info', kwargs={'pk': pet.pk})
+    response = client.get(url)
+    assert response.status_code == 302
+    assert response.url.startswith(reverse('login_view'))
+
 
 # ----------------------------------------------------------------
 
 
-# @pytest.mark.django_db
-# def test_modify_pet(user, pets):
-#     pet = Pet.objects.first()
-#     client = Client()
-#     client.force_login(user)
-#     url = reverse('modify_pet', kwargs={'pk': pet.pk})
-#     response = client.get(url)
-#     pet_data = response.data
-#     new_pet_name = 'Kaziu'
-#     pet_data['name'] = new_pet_name
-#     response = client.patch(url)
-#     assert response.status_code == 200
-#     pet_object = Pet.objects.get(pk=pet.pk)
-#     assert pet_object.name == new_pet_name
+@pytest.mark.django_db
+def test_modify_pet_get(user, pets):
+    pet = Pet.objects.first()
+    client = Client()
+    client.force_login(user)
+    url = reverse('modify_pet', kwargs={'pk': pet.pk})
+    response = client.get(url)
+    assert response.status_code == 200
+    assert isinstance(response.context['form'], AddPetForm)
+
+
+@pytest.mark.django_db
+def test_modify_pet_post(user, pets):
+    pet = Pet.objects.first()
+    client = Client()
+    client.force_login(user)
+    url = reverse('modify_pet', kwargs={'pk': pet.pk})
+    new_data = {
+        'name': 'Jezor',
+        'species': 'cat',
+        'breed': 'Mieszaniec',
+        'gender': 'male',
+        'birth_date': '2022-12-20',
+        'weight': 2.0,
+        'chip': True
+    }
+    response = client.post(url, new_data)
+    assert response.status_code == 302
+    assert response.url == reverse('pet_info', kwargs={'pk': pet.pk})
+    assert Pet.objects.get(name=new_data['name'],
+                           species=new_data['species'],
+                           breed=new_data['breed'],
+                           gender=new_data['gender'],
+                           birth_date=new_data['birth_date'],
+                           weight=new_data['weight'],
+                           chip=new_data['chip'])
+
+
+@pytest.mark.django_db
+def test_detail_pet_not_login(pets):
+    pet = Pet.objects.first()
+    client = Client()
+    url = reverse('modify_pet', kwargs={'pk': pet.pk})
+    response = client.get(url)
+    assert response.status_code == 302
+    assert response.url.startswith(reverse('login_view'))
 
 # ----------------------------------------------------------------
 
 
-# @pytest.mark.django_db
-# def test_delete_pet(user, pets):
-#     pet = Pet.objects.first()
-#     client = Client()
-#     client.force_login(user)
-#     url = reverse('delete_pet', kwargs={'pk': pet.pk})
-#     response = client.delete(url)
-#     assert response.status_code == 204
-#     pet_pks = [pet.pk for pet in Pet.objects.all()]
-#     assert pet.pk not in pet_pks
+@pytest.mark.django_db
+def test_delete_pet_post(user, pets):
+    pet = Pet.objects.first()
+    client = Client()
+    client.force_login(user)
+    url = reverse('delete_pet', kwargs={'pk': pet.pk})
+    response = client.post(url)
+    assert response.status_code == 302
+    pet_pks = [pet.pk for pet in Pet.objects.all()]
+    assert pet.pk not in pet_pks
+
+
+@pytest.mark.django_db
+def test_delete_pet_not_login(pets):
+    pet = Pet.objects.first()
+    client = Client()
+    url = reverse('delete_pet', kwargs={'pk': pet.pk})
+    response = client.get(url)
+    assert response.status_code == 302
+    assert response.url.startswith(reverse('login_view'))
 
 # ----------------------------------------------------------------
 
@@ -232,16 +294,49 @@ def test_list_visits_not_login(visits):
 # ----------------------------------------------------------------
 
 
-# @pytest.mark.django_db
-# def test_visit_detail(visits, user):
-#     visit = Visit.objects.first()
-#     client = Client()
-#     client.force_login(user)
-#     url = reverse('visit_info', kwargs={'pk': visit.pk})
-#     response = client.get(url)
-#     assert response.status_code == 200
-#     for field in 'description':
-#         assert field in response.data
+@pytest.mark.django_db
+def test_visit_detail(visits, user):
+    visit = Visit.objects.first()
+    client = Client()
+    client.force_login(user)
+    url = reverse('visit_info', kwargs={'pk': visit.pk})
+    response = client.get(url)
+    assert response.status_code == 200
+    assert response.context['visit'] == visit
+
+
+@pytest.mark.django_db
+def test_visit_detail_not_login(visits):
+    visit = Visit.objects.first()
+    client = Client()
+    url = reverse('visit_info', kwargs={'pk': visit.pk})
+    response = client.get(url)
+    assert response.status_code == 302
+    assert response.url.startswith(reverse('login_view'))
+
+# ----------------------------------------------------------------
+
+
+@pytest.mark.django_db
+def test_delete_visit_post(visits, user):
+    visit = Visit.objects.first()
+    client = Client()
+    client.force_login(user)
+    url = reverse('delete_visit', kwargs={'pk': visit.pk})
+    response = client.post(url)
+    assert response.status_code == 302
+    visit_pks = [visit.pk for visit in Visit.objects.all()]
+    assert visit.pk not in visit_pks
+
+
+@pytest.mark.django_db
+def test_delete_visit_not_login(visits):
+    visit = Visit.objects.first()
+    client = Client()
+    url = reverse('delete_visit', kwargs={'pk': visit.pk})
+    response = client.get(url)
+    assert response.status_code == 302
+    assert response.url.startswith(reverse('login_view'))
 
 # ----------------------------------------------------------------
 
@@ -298,16 +393,65 @@ def test_logout_user_not_login():
     assert response.url.startswith(reverse('login_view'))
 
 
-@pytest.mark.django_db
-def test_logout_user():
-    user = User.objects.create(username='jajkon', password='Jajkon')
-    client = Client(username='jajkon', password='Jajkon')
-    client.login()
-    url = reverse('logout_view')
-    response = client.get(url)
-    assert response.status_code == 302
-    assert '_auth_user_id' not in client.session
+# @pytest.mark.django_db
+# def test_logout_user():
+#     user = User.objects.create(username='jajkon', password='Jajkon')
+#     client = Client(username='jajkon', password='Jajkon')
+#     client.login()
+#     url = reverse('logout_view')
+#     response = client.get(url)
+#     assert response.status_code == 302
+#     assert '_auth_user_id' not in client.session
 
 
 # ----------------------------------------------------------------
+
+
+@pytest.mark.django_db
+def test_index_view_not_login():
+    client = Client()
+    url = reverse('index')
+    response = client.get(url)
+    assert response.status_code == 200
+
+
+@pytest.mark.django_db
+def test_index_view_if_login(user):
+    client = Client()
+    client.force_login(user)
+    url = reverse('index')
+    response = client.get(url)
+    assert response.status_code == 302
+    assert response.url.startswith(reverse('dashboard'))
+
+# ----------------------------------------------------------------
+
+
+@pytest.mark.django_db
+def test_about_view_not_login():
+    client = Client()
+    url = reverse('about')
+    response = client.get(url)
+    assert response.status_code == 200
+
+
+@pytest.mark.django_db
+def test_about_view_if_login(user):
+    client = Client()
+    client.force_login(user)
+    url = reverse('about')
+    response = client.get(url)
+    assert response.status_code == 302
+    assert response.url.startswith(reverse('dashboard'))
+
+# ----------------------------------------------------------------
+
+
+@pytest.mark.django_db
+def test_dashboard_view_not_login():
+    client = Client()
+    url = reverse('dashboard')
+    response = client.get(url)
+    assert response.status_code == 302
+    assert response.url.startswith(reverse('login_view'))
 

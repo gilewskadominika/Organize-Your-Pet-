@@ -21,7 +21,7 @@ class AboutView(View):
         return render(request, 'home_page/about.html')
 
 
-class DashboardView(View):
+class DashboardView(LoginRequiredMixin, View):
 
     def get(self, request):
         closest_visit = Visit.objects.filter(pet__owner=request.user).order_by('available_date__date').first()

@@ -14,9 +14,9 @@ def user():
 @pytest.fixture
 def pets(user):
     x = [
-        Pet.objects.create(name='Azor', species='Pies', other_species='brak', breed='Mieszaniec', gender='Samiec',
+        Pet.objects.create(name='Azor', species='dog', other_species='brak', breed='Mieszaniec', gender='male',
                            birth_date=date(2022, 12, 20), weight=2, chip=True, owner=user),
-        Pet.objects.create(name='Kazor', species='Pies', other_species='brak', breed='Mieszaniec', gender='Samica',
+        Pet.objects.create(name='Kazor', species='cat', other_species='brak', breed='Mieszaniec', gender='female',
                            birth_date=date(2022, 10, 28), weight=5, chip=False, owner=user)]
     return x
 

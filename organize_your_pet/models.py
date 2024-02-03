@@ -68,6 +68,7 @@ class Visit(models.Model):
     description = models.TextField()
 
     def __str__(self):
-        return f'''Wizyta w klinice {self.available_date.clinic.name} dla {self.pet} odbędzie się {self.available_date.date} 
+        return f'''Wizyta w klinice {self.available_date.clinic.name} dla {self.pet} odbędzie się 
+        {self.available_date.date} 
         o godzinie {self.available_date.start_time}. Przyjmie lekarz {self.available_date.doctor}. 
         Opis wizyty: {self.description}'''

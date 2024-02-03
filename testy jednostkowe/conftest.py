@@ -1,4 +1,4 @@
-from datetime import datetime, time, date
+from datetime import time, date
 
 import pytest
 from django.contrib.auth.models import User
@@ -52,25 +52,25 @@ def doctors(clinics):
 @pytest.fixture
 def available_dates(doctors):
     x = [
-        AvailableDate.objects.create(date=date(2024, 1, 30), start_time=time(15,30),
+        AvailableDate.objects.create(date=date(2024, 1, 30), start_time=time(15, 30),
                                      end_time=time(16, 00), clinic_id=doctors[0].clinic_id,
                                      doctor_id=doctors[0].id),
-        AvailableDate.objects.create(date=date(2024, 1, 30), start_time=time(15,30),
+        AvailableDate.objects.create(date=date(2024, 1, 30), start_time=time(15, 30),
                                      end_time=time(16, 00), clinic_id=doctors[1].clinic_id,
                                      doctor_id=doctors[1].id),
-        AvailableDate.objects.create(date=date(2024, 1, 30), start_time=time(16,30),
+        AvailableDate.objects.create(date=date(2024, 1, 30), start_time=time(16, 30),
                                      end_time=time(17, 00), clinic_id=doctors[2].clinic_id,
                                      doctor_id=doctors[2].id),
-        AvailableDate.objects.create(date=date(2024, 1, 30), start_time=time(16,30),
+        AvailableDate.objects.create(date=date(2024, 1, 30), start_time=time(16, 30),
                                      end_time=time(17, 00), clinic_id=doctors[3].clinic_id,
                                      doctor_id=doctors[3].id),
-        AvailableDate.objects.create(date=date(2024, 1, 30), start_time=time(15,30),
+        AvailableDate.objects.create(date=date(2024, 1, 30), start_time=time(15, 30),
                                      end_time=time(16, 00), clinic_id=doctors[4].clinic_id,
                                      doctor_id=doctors[4].id),
-        AvailableDate.objects.create(date=date(2024, 1, 30), start_time=time(15,30),
+        AvailableDate.objects.create(date=date(2024, 1, 30), start_time=time(15, 30),
                                      end_time=time(16, 00), clinic_id=doctors[5].clinic_id,
                                      doctor_id=doctors[5].id),
-        AvailableDate.objects.create(date=date(2024, 1, 30), start_time=time(14,30),
+        AvailableDate.objects.create(date=date(2024, 1, 30), start_time=time(14, 30),
                                      end_time=time(15, 00), clinic_id=doctors[0].clinic_id,
                                      doctor_id=doctors[0].id),
     ]

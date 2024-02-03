@@ -1,5 +1,3 @@
-from time import timezone
-
 from django import forms
 from django.core.exceptions import ValidationError
 
@@ -41,7 +39,8 @@ class AddPetForm(forms.ModelForm):
         breed = cleaned_data.get('breed')
         weight = cleaned_data.get('weight')
         chip = cleaned_data.get('chip')
-        existing_pet = Pet.objects.filter(name=name, birth_date=birth_date, species=species, other_species=other_species,
+        existing_pet = Pet.objects.filter(name=name, birth_date=birth_date, species=species,
+                                          other_species=other_species,
                                           gender=gender, breed=breed, weight=weight, chip=chip).first()
         if existing_pet:
             raise ValidationError('Podane zwierzę już istnieje')
@@ -60,9 +59,9 @@ class BookAppointmentForm(forms.ModelForm):
     class Meta:
         model = Visit
         fields = '__all__'
-        # widgets =
 
     def __init__(self, user, doctor, clinic, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.fields['pet'].queryset = Pet.objects.filter(owner=user)
-        self.fields['available_date'].queryset = AvailableDate.objects.filter(doctor=doctor, clinic=clinic, is_reserved=False)
+        self.fields['available_date'].queryset = AvailableDate.objects.filter(
+            doctor=doctor, clinic=clinic, is_reserved=False)

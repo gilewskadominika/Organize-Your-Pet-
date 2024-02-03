@@ -89,19 +89,19 @@ def test_login_user_get():
     assert isinstance(response.context['form'], LoginForm)
 
 
-# @pytest.mark.django_db
-# def test_login_user_post(user):
-#     user = User.objects.first()
-#     client = Client()
-#     url = reverse('login_view')
-#     data = {
-#         'username': 'test',
-#         'password': 'DupaDupa'
-#     }
-#     response = client.post(url, data)
-#     assert user.is_authenticated
-#     assert response.status_code == 302
-    # assert response.url == reverse('dashboard')
+@pytest.mark.django_db
+def test_login_user_post(user):
+    user = User.objects.first()
+    client = Client()
+    url = reverse('login_view')
+    data = {
+        'username': 'test',
+        'password': 'DupaDupa'
+    }
+    response = client.post(url, data)
+    assert user.is_authenticated
+    assert response.status_code == 302
+    assert response.url == reverse('dashboard')
 
 
 @pytest.mark.django_db
@@ -489,44 +489,44 @@ def test_list_doctors_not_login(clinics):
 # ----------------------------------------------------------------
 
 
-# @pytest.mark.django_db
-# def test_doctor_detail_get(doctors, user, clinics):
-#     clinic = Clinic.objects.first()
-#     doctor = Doctor.objects.filter(clinic_id=clinic.pk).first()
-#     client = Client()
-#     client.force_login(user)
-#     url = reverse('doctors_list', kwargs={'clinic_pk': clinic.pk, 'doctor_pk': doctor.pk})
-#     response = client.get(url)
-#     assert response.status_code == 200
-#     assert isinstance(response.context['form'], BookAppointmentForm)
-#
-#
-# @pytest.mark.django_db
-# def test_doctor_detail_post(user, clinics, doctors, pets, available_dates):
-#     date = AvailableDate.objects.filter('date').first()
-#     pet = Pet.objects.first()
-#     clinic = Clinic.objects.first()
-#     doctor = Doctor.objects.filter(clinic_id=clinic.pk).first()
-#     client = Client()
-#     client.force_login(user)
-#     data = {
-#         'pet': pet,
-#         'available_date': [d.id for d in date],
-#         'description': 'łapa'
-#     }
-#     url = reverse('doctors_list', kwargs={'clinic_pk': clinic.pk, 'doctor_pk': doctor.pk})
-#     response = client.get(url, data)
-#     assert response.status_code == 302
-#     assert response.url == reverse('visits_list')
-#
-#
-# @pytest.mark.django_db
-# def test_doctor_detail_not_login(clinics, doctors):
-#     client = Client()
-#     url = reverse('doctors_list', kwargs={'clinic_pk': clinics[0].pk, 'doctor_pk': doctors[0].pk})
-#     response = client.get(url)
-#     assert response.status_code == 302
-#     assert response.url.startswith(reverse('login_view'))
+@pytest.mark.django_db
+def test_doctor_detail_get(doctors, user, clinics):
+    clinic = Clinic.objects.first()
+    doctor = Doctor.objects.filter(clinic_id=clinic.pk).first()
+    client = Client()
+    client.force_login(user)
+    url = reverse('doctor_info', kwargs={'clinic_pk': clinic.pk, 'doctor_pk': doctor.pk})
+    response = client.get(url)
+    assert response.status_code == 200
+    assert isinstance(response.context['form'], BookAppointmentForm)
+
+
+@pytest.mark.django_db
+def test_doctor_detail_post(user, clinics, doctors, pets, available_dates):
+    date = AvailableDate.objects.first()
+    pet = Pet.objects.first()
+    clinic = Clinic.objects.first()
+    doctor = Doctor.objects.filter(clinic_id=clinic.pk).first()
+    client = Client()
+    client.force_login(user)
+    data = {
+        'pet': pet.id,
+        'available_date': date.id,
+        'description': 'łapa'
+    }
+    url = reverse('doctor_info', kwargs={'clinic_pk': clinic.pk, 'doctor_pk': doctor.pk})
+    response = client.post(url, data)
+    assert response.status_code == 302
+    assert response.url == reverse('visits_list')
+
+
+@pytest.mark.django_db
+def test_doctor_detail_not_login(clinics, doctors):
+    client = Client()
+    url = reverse('doctor_info', kwargs={'clinic_pk': clinics[0].pk, 'doctor_pk': doctors[0].pk})
+    response = client.get(url)
+    assert response.status_code == 302
+    assert response.url.startswith(reverse('login_view'))
 
 # ----------------------------------------------------------------
 

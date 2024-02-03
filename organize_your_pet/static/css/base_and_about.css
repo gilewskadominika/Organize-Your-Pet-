@@ -1,0 +1,25 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    background-image:  url("../img/kot.jpg");
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+    position: relative;
+}
+
+#wrapper {
+    max-width: 1500px;
+    margin: 0 auto;
+    background-color: white;
+}
+
+header img {
+    width: 100%;
+    display: block;
+}
+

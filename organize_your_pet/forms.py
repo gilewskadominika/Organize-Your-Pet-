@@ -44,6 +44,8 @@ class AddPetForm(forms.ModelForm):
                                           gender=gender, breed=breed, weight=weight, chip=chip).first()
         if existing_pet:
             raise ValidationError('Podane zwierzę już istnieje')
+        if weight is not None and weight <= 0:
+            raise ValidationError('Waga musi być większa niż zero')
 
         return cleaned_data
 

@@ -1,6 +1,7 @@
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.contrib.auth.models import User
+from django.core.exceptions import ValidationError
 from django.shortcuts import render, redirect
 from django.urls import reverse
 from django.views import View
@@ -46,6 +47,8 @@ class LoginView(View):
             username = form.cleaned_data.get('username')
             password = form.cleaned_data.get('password')
             user = authenticate(request, username=username, password=password)
+            if not user:
+                ctx['error_message'] = 'Nieprawidłowe dane logowania'
             if user is not None:
                 login(request, user)
                 next = request.GET.get('next', 'dashboard')
